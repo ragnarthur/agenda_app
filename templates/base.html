@@ -1,23 +1,35 @@
 ﻿<!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agenda Digital</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <header>
-        <h1>Agenda Digital</h1>
-        <nav>
-            <a href="{{ url_for('index') }}">Agendar Evento</a>
-            <a href="{{ url_for('schedule') }}">Eventos Agendados</a>
+        <h1 class="text-white bg-dark py-3 text-center">Agenda Digital</h1>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('index') }}">Agendar Evento</a>
+                <a class="navbar-brand" href="{{ url_for('schedule') }}">Eventos Agendados</a>
+                <a class="navbar-brand" href="{{ url_for('realizados') }}">Eventos Realizados</a>
+            </div>
         </nav>
+        
     </header>
     <main>
         {% block content %}{% endblock %}
     </main>
-    <footer>
-        <p>&copy; 2023 Agenda Digital</p>
+    <footer class="text-center text-white bg-dark py-3">
+        &copy; 2023 Agenda Digital
     </footer>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

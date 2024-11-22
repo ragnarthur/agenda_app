@@ -1,0 +1,28 @@
+﻿{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center text-primary mb-4">Eventos Realizados</h2>
+    <div class="row">
+        {% if events %}
+            {% for event in events %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-lg h-100 event-card">
+                    <!-- Badge do tipo de evento -->
+                    <div class="card-header {% if event.tipo == 'Show' %}bg-show{% elif event.tipo == 'Aula' %}bg-class{% elif event.tipo == 'Casamento' %}bg-wedding{% endif %}">
+                        {{ event.tipo }}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ event.titulo }}</h5>
+                        <p class="card-text"><strong>Data:</strong> {{ event.data }} às {{ event.hora }}</p>
+                        <p class="card-text">{{ event.descricao }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <p class="text-center">Nenhum evento realizado.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
