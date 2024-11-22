@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Agenda Digital</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Agenda Digital</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Agendar Evento</a>
+            <a href="{{ url_for('schedule') }}">Eventos Agendados</a>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2023 Agenda Digital</p>
+    </footer>
+</body>
+</html>

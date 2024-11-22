@@ -1,0 +1,18 @@
+﻿{% extends 'base.html' %}
+
+{% block content %}
+<h2>Eventos Agendados</h2>
+{% if events %}
+    <ul class="event-list">
+        {% for event in events %}
+        <li>
+            <h3>{{ event['titulo'] }} ({{ event['tipo'] }})</h3>
+            <p><strong>Data:</strong> {{ event['data'] }} às {{ event['hora'] }}</p>
+            <p>{{ event['descricao'] }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Nenhum evento agendado.</p>
+{% endif %}
+{% endblock %}
