@@ -8,7 +8,6 @@
                 <div class="card-body">
                     <h2 class="card-title text-center text-primary mb-4">Agendar Novo Evento</h2>
                     <form action="{{ url_for('agendar') }}" method="post">
-                        <!-- Tipo de Evento -->
                         <div class="mb-3">
                             <label for="tipo" class="form-label">Tipo de Evento:</label>
                             <select name="tipo" id="tipo" class="form-select" required>
@@ -17,74 +16,51 @@
                                 <option value="Casamento">Casamento</option>
                             </select>
                         </div>
-
-                        <!-- Título -->
                         <div class="mb-3">
                             <label for="titulo" class="form-label">Título:</label>
                             <input type="text" id="titulo" name="titulo" class="form-control" required>
                         </div>
-
-                        <!-- Data -->
                         <div class="mb-3">
                             <label for="data" class="form-label">Data:</label>
                             <input type="date" id="data" name="data" class="form-control" required>
                         </div>
-
-                        <!-- Hora -->
                         <div class="mb-3">
                             <label for="hora" class="form-label">Hora:</label>
                             <input type="time" id="hora" name="hora" class="form-control" required>
                         </div>
-
-                        <!-- Repetição Semanal -->
-                        <div class="mb-3">
-                            <label class="form-label">Repetir Semanalmente?</label>
-                            <div class="form-check">
-                                <input type="checkbox" id="repetir" name="repetir" class="form-check-input">
-                                <label for="repetir" class="form-check-label">Sim, repetir este evento semanalmente</label>
-                            </div>
-                        </div>
-
-                        <!-- Dias da Semana -->
-                        <div class="mb-3" id="dias-semana-container" style="display: none;">
-                            <label class="form-label">Selecionar Dias da Semana:</label>
-                            <div class="form-check">
-                                <input type="checkbox" id="segunda" name="dias[]" value="Segunda-feira" class="form-check-input">
-                                <label for="segunda" class="form-check-label">Segunda-feira</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="terca" name="dias[]" value="Terça-feira" class="form-check-input">
-                                <label for="terca" class="form-check-label">Terça-feira</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="quarta" name="dias[]" value="Quarta-feira" class="form-check-input">
-                                <label for="quarta" class="form-check-label">Quarta-feira</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="quinta" name="dias[]" value="Quinta-feira" class="form-check-input">
-                                <label for="quinta" class="form-check-label">Quinta-feira</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="sexta" name="dias[]" value="Sexta-feira" class="form-check-input">
-                                <label for="sexta" class="form-check-label">Sexta-feira</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="sabado" name="dias[]" value="Sábado" class="form-check-input">
-                                <label for="sabado" class="form-check-label">Sábado</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="domingo" name="dias[]" value="Domingo" class="form-check-input">
-                                <label for="domingo" class="form-check-label">Domingo</label>
-                            </div>
-                        </div>
-
-                        <!-- Descrição -->
                         <div class="mb-3">
                             <label for="descricao" class="form-label">Descrição:</label>
                             <textarea id="descricao" name="descricao" class="form-control" rows="4" required></textarea>
                         </div>
-
-                        <!-- Botão de Enviar -->
+                        <!-- Campos financeiros -->
+                        <div class="mb-3">
+                            <label for="valor_bruto" class="form-label">Valor Bruto:</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="text" id="valor_bruto" name="valor_bruto" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pagamento_musicos" class="form-label">Pagamento de Músicos:</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="text" id="pagamento_musicos" name="pagamento_musicos" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="locacao_som" class="form-label">Locação de Som:</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="text" id="locacao_som" name="locacao_som" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="outros_custos" class="form-label">Outros Custos:</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="text" id="outros_custos" name="outros_custos" class="form-control">
+                            </div>
+                        </div>
                         <button type="submit" class="btn btn-primary w-100">Agendar Evento</button>
                     </form>
                 </div>

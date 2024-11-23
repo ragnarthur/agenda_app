@@ -1,0 +1,37 @@
+﻿{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center text-primary mb-4">Resumo Financeiro</h2>
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Categoria</th>
+                <th>Total (R$)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Receita Bruta</td>
+                <td>R$ {{ total_bruto | round(2) }}</td>
+            </tr>
+            <tr>
+                <td>Pagamentos de Músicos</td>
+                <td>R$ {{ total_pagamento_musicos | round(2) }}</td>
+            </tr>
+            <tr>
+                <td>Locação de Som</td>
+                <td>R$ {{ total_locacao_som | round(2) }}</td>
+            </tr>
+            <tr>
+                <td>Outros Custos</td>
+                <td>R$ {{ total_outros_custos | round(2) }}</td>
+            </tr>
+            <tr class="table-success">
+                <td><strong>Receita Líquida</strong></td>
+                <td><strong>R$ {{ total_liquido | round(2) }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

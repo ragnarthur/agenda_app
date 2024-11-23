@@ -1,0 +1,37 @@
+﻿{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center text-primary mb-4">Contabilidade</h2>
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Evento</th>
+                <th>Valor Bruto (R$)</th>
+                <th>Pagamentos de Músicos (R$)</th>
+                <th>Locação de Som (R$)</th>
+                <th>Outros Custos (R$)</th>
+                <th>Valor Líquido (R$)</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cont in contabilidade %}
+            <tr>
+                <td>{{ cont.evento.titulo }}</td>
+                <td>R$ {{ cont.valor_bruto | round(2) }}</td>
+                <td>R$ {{ cont.pagamento_musicos | round(2) }}</td>
+                <td>R$ {{ cont.locacao_som | round(2) }}</td>
+                <td>R$ {{ cont.outros_custos | round(2) }}</td>
+                <td>R$ {{ cont.valor_liquido | round(2) }}</td>
+                <td>
+                    <form action="{{ url_for('excluir_evento', event_id=cont.evento_id) }}" method="post">
+                        <button class="btn btn-danger btn-sm">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

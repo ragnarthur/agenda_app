@@ -28,7 +28,9 @@
                     
                     <div class="card-body">
                         <h5 class="card-title">{{ event.titulo }}</h5>
-                        <p class="card-text"><strong>Data:</strong> </p>
+                        <p class="card-text">
+                            <strong>Data:</strong> {{ event.data | format_datetime }} às {{ event.hora }}
+                        </p>
                         <p class="card-text">{{ event.descricao }}</p>
                     </div>
                     
