@@ -77,8 +77,8 @@ def agendar():
 
 @app.route('/schedule')
 def schedule():
-    # Recuperar eventos do banco de dados
-    eventos = Evento.query.all()
+    # Recuperar eventos do banco de dados ordenados pela data mais próxima
+    eventos = Evento.query.order_by(Evento.data.asc(), Evento.hora.asc()).all()
     return render_template('schedule.html', events=eventos)
 
 @app.route('/excluir/<int:event_id>', methods=['POST'])

@@ -20,6 +20,54 @@
     updateDateTime();
     setInterval(updateDateTime, 60000);
 
+    // Função para destacar os cards com base na data
+    const highlightCards = () => {
+        const today = new Date();
+        const eventCards = document.querySelectorAll('.event-card');
+
+        eventCards.forEach(card => {
+            const eventDateStr = card.dataset.eventDate;
+            const eventDate = new Date(eventDateStr);
+
+            // Calcula a diferença em dias
+            const diffInTime = eventDate - today;
+            const diffInDays = Math.ceil(diffInTime / (1000 * 60 * 60 * 24));
+
+            // Remove classes antigas
+            card.classList.remove('bg-danger', 'bg-success');
+
+            // Adiciona classes com base na proximidade
+            if (diffInDays <= 3 && diffInDays >= 0) {
+                card.classList.add('bg-danger'); // Destaque para eventos próximos
+            } else if (diffInDays > 3) {
+                card.classList.add('bg-success'); // Neutro para eventos distantes
+            }
+        });
+    };
+
+    // Chamar a função para destacar os cards
+    highlightCards();
+
+    // Outras funcionalidades
+    const eventCards = document.querySelectorAll('.event-card');
+    eventCards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '1'; // Tornar o cartão visível
+            card.style.transform = 'translateY(0)'; // Remover a translação vertical
+        }, index * 150); // Animação de entrada
+    });
+
+    eventCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'scale(1.05)'; // Ampliação leve ao passar o mouse
+            card.style.transition = 'transform 0.3s ease'; // Suavizar transição
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'scale(1)'; // Retornar ao tamanho original
+        });
+    });
+
     // Máscara para formatar valores monetários (R$)
     const applyCurrencyMask = (input) => {
         let value = input.value.replace(/\D/g, ''); // Remove caracteres não numéricos
@@ -46,25 +94,5 @@
         if (input.value) {
             applyCurrencyMask(input);
         }
-    });
-
-    // Outras funcionalidades (animações e lógicas de cartões de eventos)
-    const eventCards = document.querySelectorAll('.event-card');
-    eventCards.forEach((card, index) => {
-        setTimeout(() => {
-            card.style.opacity = '1'; // Tornar o cartão visível
-            card.style.transform = 'translateY(0)'; // Remover a translação vertical
-        }, index * 150); // Animação de entrada
-    });
-
-    eventCards.forEach(card => {
-        card.addEventListener('mouseenter', () => {
-            card.style.transform = 'scale(1.05)'; // Ampliação leve ao passar o mouse
-            card.style.transition = 'transform 0.3s ease'; // Suavizar transição
-        });
-
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'scale(1)'; // Retornar ao tamanho original
-        });
     });
 });
