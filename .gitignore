@@ -6,5 +6,7 @@ uptade_db.py
 
 reset_db.py
 # Ignorar banco de dados
+instance/agenda.reset_db
 instance/
 
+agenda.db

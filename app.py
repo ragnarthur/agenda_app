@@ -169,7 +169,7 @@ def contabilidade():
     
     # Ordena os eventos dentro de cada grupo por data do evento
     for key in contabilidade_by_date:
-        contabilidade_by_date[key].sort(key=lambda x: x.evento.data if x.evento and x.evento.data else "")
+        contabilidade_by_date[key].sort(key=lambda x: x.evento.data if x.evento and x.evento.data else datetime.min)
 
     return render_template('contabilidade.html', contabilidade_by_date=contabilidade_by_date)
 
