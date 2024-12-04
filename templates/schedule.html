@@ -21,9 +21,6 @@
                     <!-- Badge do tipo de evento -->
                     <div class="card-header {% if event.tipo == 'Show' %}bg-show{% elif event.tipo == 'Aula' %}bg-class{% elif event.tipo == 'Casamento' %}bg-wedding{% endif %}">
                         {{ event.tipo }}
-                        {% if event.semanal %}
-                        <span class="badge bg-info text-white ms-2">Semanal</span>
-                        {% endif %}
                     </div>
                     
                     <div class="card-body">
@@ -36,10 +33,16 @@
                     
                     <!-- Botões para ações -->
                     <div class="card-footer text-end d-flex justify-content-between">
-                        <button class="btn btn-sm btn-outline-success mark-as-done" data-event-id="{{ event.id }}">
+                        <button 
+                            class="btn btn-sm btn-outline-success mark-as-done" 
+                            data-event-id="{{ event.id }}" 
+                            onclick="markAsDone(event)">
                             <i class="fas fa-check"></i> Realizado
                         </button>
-                        <button class="btn btn-sm btn-outline-secondary delete-event" data-event-id="{{ event.id }}">
+                        <button 
+                            class="btn btn-sm btn-outline-secondary delete-event" 
+                            data-event-id="{{ event.id }}" 
+                            onclick="deleteEvent(event)">
                             <i class="fas fa-trash-alt"></i> Excluir
                         </button>
                     </div>

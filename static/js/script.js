@@ -48,24 +48,68 @@
     // Chamar a função para destacar os cards
     highlightCards();
 
-    // Outras funcionalidades
+    // Função para marcar evento como realizado
+    const markAsDone = (event) => {
+        const button = event.target.closest('.mark-as-done');
+        if (!button) return;
+
+        const eventId = button.getAttribute('data-event-id');
+        fetch(`/realizado/${eventId}`, { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    const card = button.closest('.event-card');
+                    if (card) card.remove(); // Remove o card da lista de eventos agendados
+                } else {
+                    console.error('Erro ao marcar como realizado');
+                    alert('Não foi possível marcar o evento como realizado.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro de conexão:', error);
+                alert('Erro de conexão ao tentar marcar o evento como realizado.');
+            });
+    };
+
+    // Função para excluir evento
+    const deleteEvent = (event) => {
+        const button = event.target.closest('.delete-event');
+        if (!button) return;
+
+        const eventId = button.getAttribute('data-event-id');
+        fetch(`/excluir/${eventId}`, { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    const card = button.closest('.event-card');
+                    if (card) card.remove(); // Remove o card da lista de eventos agendados
+                } else {
+                    console.error('Erro ao excluir evento');
+                    alert('Não foi possível excluir o evento.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro de conexão:', error);
+                alert('Erro de conexão ao tentar excluir o evento.');
+            });
+    };
+
+    // Adicionar eventos de clique para botões de "Realizado" e "Excluir"
+    const markAsDoneButtons = document.querySelectorAll('.mark-as-done');
+    markAsDoneButtons.forEach(button => {
+        button.addEventListener('click', markAsDone);
+    });
+
+    const deleteEventButtons = document.querySelectorAll('.delete-event');
+    deleteEventButtons.forEach(button => {
+        button.addEventListener('click', deleteEvent);
+    });
+
+    // Animação de entrada para os cards
     const eventCards = document.querySelectorAll('.event-card');
     eventCards.forEach((card, index) => {
         setTimeout(() => {
             card.style.opacity = '1'; // Tornar o cartão visível
             card.style.transform = 'translateY(0)'; // Remover a translação vertical
         }, index * 150); // Animação de entrada
-    });
-
-    eventCards.forEach(card => {
-        card.addEventListener('mouseenter', () => {
-            card.style.transform = 'scale(1.05)'; // Ampliação leve ao passar o mouse
-            card.style.transition = 'transform 0.3s ease'; // Suavizar transição
-        });
-
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'scale(1)'; // Retornar ao tamanho original
-        });
     });
 
     // Máscara para formatar valores monetários (R$)

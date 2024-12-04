@@ -3,35 +3,83 @@
 {% block content %}
 <div class="container my-5">
     <h2 class="text-center text-primary mb-4">Contabilidade</h2>
-    <table class="table table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th>Evento</th>
-                <th>Valor Bruto (R$)</th>
-                <th>Pagamentos de Músicos (R$)</th>
-                <th>Locação de Som (R$)</th>
-                <th>Outros Custos (R$)</th>
-                <th>Valor Líquido (R$)</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cont in contabilidade %}
-            <tr>
-                <td>{{ cont.evento.titulo }}</td>
-                <td>R$ {{ cont.valor_bruto | round(2) }}</td>
-                <td>R$ {{ cont.pagamento_musicos | round(2) }}</td>
-                <td>R$ {{ cont.locacao_som | round(2) }}</td>
-                <td>R$ {{ cont.outros_custos | round(2) }}</td>
-                <td>R$ {{ cont.valor_liquido | round(2) }}</td>
-                <td>
-                    <form action="{{ url_for('excluir_evento', event_id=cont.evento_id) }}" method="post">
-                        <button class="btn btn-danger btn-sm">Excluir</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+    {% if contabilidade_by_date %}
+        {% for date, events in contabilidade_by_date.items() %}
+        <div class="my-4">
+            <h3 class="text-secondary">{{ date }}</h3>
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Evento</th>
+                        <th>Data do Evento</th>
+                        <th>Data de Realização</th>
+                        <th>Valor Bruto (R$)</th>
+                        <th>Pagamentos de Músicos (R$)</th>
+                        <th>Locação de Som (R$)</th>
+                        <th>Outros Custos (R$)</th>
+                        <th>Valor Líquido (R$)</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cont in events %}
+                    <tr>
+                        <td>
+                            {% if cont.evento %}
+                                {{ cont.evento.titulo }}
+                            {% elif cont.evento_titulo %}
+                                {{ cont.evento_titulo }}
+                            {% else %}
+                                Evento Removido
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if cont.evento %}
+                                {{ cont.evento.data | format_datetime }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if cont.realizado and cont.data_realizacao %}
+                                {{ cont.data_realizacao | format_datetime }}
+                            {% else %}
+                                Não Realizado
+                            {% endif %}
+                        </td>
+                        <td>R$ {{ cont.valor_bruto | round(2) }}</td>
+                        <td>R$ {{ cont.pagamento_musicos | round(2) }}</td>
+                        <td>R$ {{ cont.locacao_som | round(2) }}</td>
+                        <td>R$ {{ cont.outros_custos | round(2) }}</td>
+                        <td>R$ {{ cont.valor_liquido | round(2) }}</td>
+                        <td>
+                            {% if cont.realizado %}
+                                <span class="badge bg-success">Finalizado</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Pendente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if cont.realizado %}
+                                <span class="text-muted d-block text-center">Evento finalizado</span>
+                            {% elif cont.evento_id %}
+                                <form action="{{ url_for('excluir_evento', event_id=cont.evento_id) }}" method="post">
+                                    <button class="btn btn-danger btn-sm w-100">Excluir</button>
+                                </form>
+                            {% else %}
+                                <span class="text-muted">Ação não disponível</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    {% else %}
+    <p class="text-center">Nenhum dado de contabilidade encontrado.</p>
+    {% endif %}
 </div>
 {% endblock %}

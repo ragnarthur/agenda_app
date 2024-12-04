@@ -3,6 +3,48 @@
 {% block content %}
 <div class="container my-5">
     <h2 class="text-center text-primary mb-4">Eventos Realizados</h2>
+
+    <!-- Barra de Filtro e Busca -->
+    <div class="card p-3 mb-4">
+        <form class="row g-3 align-items-center" method="get" action="{{ url_for('realizados') }}">
+            <div class="col-md-4">
+                <label for="filter_tipo" class="form-label">Filtrar por Tipo</label>
+                <select class="form-select" id="filter_tipo" name="tipo">
+                    <option value="">Todos</option>
+                    <option value="Show">Show</option>
+                    <option value="Aula">Aula</option>
+                    <option value="Casamento">Casamento</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="filter_mes" class="form-label">Mês</label>
+                <select class="form-select" id="filter_mes" name="mes">
+                    <option value="">Todos</option>
+                    <option value="1">Janeiro</option>
+                    <option value="2">Fevereiro</option>
+                    <option value="3">Março</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Maio</option>
+                    <option value="6">Junho</option>
+                    <option value="7">Julho</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Setembro</option>
+                    <option value="10">Outubro</option>
+                    <option value="11">Novembro</option>
+                    <option value="12">Dezembro</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="filter_ano" class="form-label">Ano</label>
+                <input type="number" class="form-control" id="filter_ano" name="ano" placeholder="2024">
+            </div>
+            <div class="col-md-2 text-end align-self-end">
+                <button class="btn btn-primary w-100" type="submit">Filtrar</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Grade de Eventos -->
     <div class="row">
         {% if events %}
             {% for event in events %}
@@ -14,7 +56,7 @@
                     </div>
                     <div class="card-body">
                         <h5 class="card-title">{{ event.titulo }}</h5>
-                        <p class="card-text"><strong>Data:</strong> {{ event.data }} às {{ event.hora }}</p>
+                        <p class="card-text"><strong>Data:</strong> {{ event.data | format_datetime }} às {{ event.hora }}</p>
                         <p class="card-text">{{ event.descricao }}</p>
                     </div>
                 </div>

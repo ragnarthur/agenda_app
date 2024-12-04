@@ -1,15 +1,29 @@
-﻿from flask import Flask, render_template, request, redirect, url_for
+﻿import os
+import locale
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_migrate import Migrate
 from models import db, Evento, EventoRealizado, Contabilidade
 from datetime import datetime
+from collections import defaultdict
 
 app = Flask(__name__)
 
+# Define o locale para português do Brasil
+locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
+
+# Caminho absoluto para o banco de dados na pasta instance
+db_path = os.path.join(os.path.abspath(os.getcwd()), 'instance', 'agenda.db')
+
 # Configuração do banco de dados SQLite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///agenda.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = 'supersecretkey'
 
 # Inicializar o banco de dados
 db.init_app(app)
+
+# Configuração do Flask-Migrate
+migrate = Migrate(app, db)
 
 # Função para converter string monetária para float
 def parse_currency(value):
@@ -64,92 +78,100 @@ def agendar():
     if valor_bruto > 0:
         nova_contabilidade = Contabilidade(
             evento_id=novo_evento.id,
+            evento_titulo=titulo,  # Nome do evento
             valor_bruto=valor_bruto,
             pagamento_musicos=pagamento_musicos,
             locacao_som=locacao_som,
             outros_custos=outros_custos,
-            valor_liquido=valor_liquido
+            valor_liquido=valor_liquido,
+            mes_ano=f"{data.split('-')[1]}/{data.split('-')[0]}"  # MM/YYYY
         )
         db.session.add(nova_contabilidade)
         db.session.commit()
 
+    flash("Evento agendado com sucesso!", "success")
     return redirect(url_for('schedule'))
 
 @app.route('/schedule')
 def schedule():
-    # Recuperar eventos do banco de dados ordenados pela data mais próxima
     eventos = Evento.query.order_by(Evento.data.asc(), Evento.hora.asc()).all()
     return render_template('schedule.html', events=eventos)
-
-@app.route('/excluir/<int:event_id>', methods=['POST'])
-def excluir_evento(event_id):
-    evento = Evento.query.get(event_id)
-    if evento:
-        db.session.delete(evento)
-        db.session.commit()
-        return '', 200
-    return '', 404
 
 @app.route('/realizado/<int:event_id>', methods=['POST'])
 def marcar_como_realizado(event_id):
     evento = Evento.query.get(event_id)
     if evento:
+        # Criar um novo registro em EventoRealizado
         evento_realizado = EventoRealizado(
             titulo=evento.titulo,
             tipo=evento.tipo,
             data=evento.data,
             hora=evento.hora,
-            descricao=evento.descricao,
+            descricao=evento.descricao
         )
         db.session.add(evento_realizado)
+
+        # Atualizar contabilidade
+        contabilidade = Contabilidade.query.filter_by(evento_id=event_id).first()
+        if contabilidade:
+            contabilidade.realizado = True
+            contabilidade.evento_titulo = evento.titulo  # Mantém o título na contabilidade
+            contabilidade.data_realizacao = datetime.now().strftime("%Y-%m-%d")  # Registra a data atual como data de realização
+
+        # Remover o evento da tabela de agendados
         db.session.delete(evento)
         db.session.commit()
-        return '', 200
-    return '', 404
+
+        flash("Evento marcado como realizado.", "success")
+    else:
+        flash("Evento não encontrado.", "danger")
+    return redirect(url_for('schedule'))
+
+@app.route('/excluir/<int:event_id>', methods=['POST'])
+def excluir_evento(event_id):
+    # Excluir evento e contabilidade associada
+    contabilidade = Contabilidade.query.filter_by(evento_id=event_id).first()
+    if contabilidade:
+        db.session.delete(contabilidade)
+
+    evento = Evento.query.get(event_id)
+    if evento:
+        db.session.delete(evento)
+
+    db.session.commit()
+    return '', 200
 
 @app.route('/realizados')
 def realizados():
     eventos_realizados = EventoRealizado.query.all()
     return render_template('realizados.html', events=eventos_realizados)
 
-@app.route('/contabilidade', methods=['GET', 'POST'])
+@app.route('/contabilidade')
 def contabilidade():
-    eventos = Evento.query.all()
-    contabilidade = Contabilidade.query.all()
-
-    if request.method == 'POST':
-        evento_id = int(request.form['evento_id'])
-        valor_bruto = float(request.form['valor_bruto'])
-        pagamento_musicos = float(request.form['pagamento_musicos'])
-        locacao_som = float(request.form['locacao_som'])
-        outros_custos = float(request.form['outros_custos'])
-
-        # Calcular o valor líquido
-        valor_liquido = valor_bruto - (pagamento_musicos + locacao_som + outros_custos)
-
-        # Atualizar ou criar a contabilidade
-        cont = Contabilidade.query.filter_by(evento_id=evento_id).first()
-        if cont:
-            cont.valor_bruto = valor_bruto
-            cont.pagamento_musicos = pagamento_musicos
-            cont.locacao_som = locacao_som
-            cont.outros_custos = outros_custos
-            cont.valor_liquido = valor_liquido
+    # Consulta todos os dados de contabilidade
+    contabilidade_data = Contabilidade.query.order_by(Contabilidade.mes_ano.desc()).all()
+    
+    # Agrupa os eventos por mês/ano
+    contabilidade_by_date = defaultdict(list)
+    for cont in contabilidade_data:
+        # Verifica se cont.evento e cont.evento.data existem
+        if cont.evento and cont.evento.data:
+            try:
+                # Tenta converter a data para datetime, caso já não seja
+                event_date = datetime.strptime(cont.evento.data, "%Y-%m-%d") if isinstance(cont.evento.data, str) else cont.evento.data
+                date_key = event_date.strftime("%B/%Y").capitalize()  # Exemplo: Dezembro/2024
+            except ValueError:
+                date_key = "Data Inválida"
         else:
-            nova_contabilidade = Contabilidade(
-                evento_id=evento_id,
-                valor_bruto=valor_bruto,
-                pagamento_musicos=pagamento_musicos,
-                locacao_som=locacao_som,
-                outros_custos=outros_custos,
-                valor_liquido=valor_liquido,
-            )
-            db.session.add(nova_contabilidade)
+            date_key = "Sem Data"
+        
+        contabilidade_by_date[date_key].append(cont)
+    
+    # Ordena os eventos dentro de cada grupo por data do evento
+    for key in contabilidade_by_date:
+        contabilidade_by_date[key].sort(key=lambda x: x.evento.data if x.evento and x.evento.data else "")
 
-        db.session.commit()
-        return redirect(url_for('contabilidade'))
-
-    return render_template('contabilidade.html', eventos=eventos, contabilidade=contabilidade)
+    return render_template('contabilidade.html', contabilidade_by_date=contabilidade_by_date)
 
 @app.route('/contabilidade_final')
 def contabilidade_final():

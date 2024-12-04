@@ -5,3 +5,6 @@ __pycache__/
 uptade_db.py
 
 reset_db.py
+# Ignorar banco de dados
+instance/
+
