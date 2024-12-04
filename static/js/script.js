@@ -20,27 +20,25 @@
     updateDateTime();
     setInterval(updateDateTime, 60000);
 
-    // Função para destacar os cards com base na data
+    // Função para destacar os cards com base na proximidade da data
     const highlightCards = () => {
         const today = new Date();
         const eventCards = document.querySelectorAll('.event-card');
 
         eventCards.forEach(card => {
-            const eventDateStr = card.dataset.eventDate;
+            const eventDateStr = card.dataset.eventDate; // Data no formato YYYY-MM-DD
             const eventDate = new Date(eventDateStr);
 
             // Calcula a diferença em dias
             const diffInTime = eventDate - today;
             const diffInDays = Math.ceil(diffInTime / (1000 * 60 * 60 * 24));
 
-            // Remove classes antigas
-            card.classList.remove('bg-danger', 'bg-success');
+            // Remove classes de estilo de proximidade
+            card.classList.remove('bg-success');
 
-            // Adiciona classes com base na proximidade
-            if (diffInDays <= 3 && diffInDays >= 0) {
-                card.classList.add('bg-danger'); // Destaque para eventos próximos
-            } else if (diffInDays > 3) {
-                card.classList.add('bg-success'); // Neutro para eventos distantes
+            // Adiciona a classe bg-success apenas para eventos dentro de 5 dias
+            if (diffInDays <= 5 && diffInDays >= 0) {
+                card.classList.add('bg-success'); // Verde para eventos próximos
             }
         });
     };

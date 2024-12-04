@@ -3,7 +3,7 @@ import locale
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_migrate import Migrate
 from models import db, Evento, EventoRealizado, Contabilidade
-from datetime import datetime
+from datetime import datetime, date
 from collections import defaultdict
 
 app = Flask(__name__)
@@ -34,6 +34,8 @@ def parse_currency(value):
 def format_datetime(value):
     """Formata uma data/hora para o formato DD/MM/AAAA."""
     if value:
+        if isinstance(value, (datetime, date)):  # Verifica se já é datetime ou date
+            return value.strftime("%d/%m/%Y")
         return datetime.strptime(value, "%Y-%m-%d").strftime("%d/%m/%Y")
     return value
 
@@ -95,7 +97,14 @@ def agendar():
 @app.route('/schedule')
 def schedule():
     eventos = Evento.query.order_by(Evento.data.asc(), Evento.hora.asc()).all()
-    return render_template('schedule.html', events=eventos)
+    
+    # Certifique-se de que as datas estão no formato datetime.date
+    for evento in eventos:
+        if isinstance(evento.data, str):  # Se a data for string, converte
+            evento.data = datetime.strptime(evento.data, "%Y-%m-%d").date()
+    
+    current_date = datetime.now().date()  # Data atual
+    return render_template('schedule.html', events=eventos, current_date=current_date)
 
 @app.route('/realizado/<int:event_id>', methods=['POST'])
 def marcar_como_realizado(event_id):
