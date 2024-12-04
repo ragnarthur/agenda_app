@@ -36,12 +36,13 @@
             </div>
             <div class="col-md-3">
                 <label for="filter_ano" class="form-label">Ano</label>
-                <input type="number" class="form-control" id="filter_ano" name="ano" placeholder="2024">
+                <input type="number" class="form-control" id="filter_ano" name="ano" placeholder="{{ current_year }}">
             </div>
             <div class="col-md-2 text-end align-self-end">
                 <button class="btn btn-primary w-100" type="submit">Filtrar</button>
             </div>
         </form>
+        
     </div>
 
     <!-- Grade de Eventos -->
@@ -67,4 +68,27 @@
         {% endif %}
     </div>
 </div>
+
+<!-- Adicionando o script para o placeholder dinâmico -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const filterAnoInput = document.getElementById('filter_ano');
+
+    if (filterAnoInput) {
+        // Define o ano atual como valor padrão, se o campo estiver vazio
+        const currentYear = new Date().getFullYear();
+        filterAnoInput.placeholder = currentYear;
+        filterAnoInput.value = filterAnoInput.value || currentYear;
+
+        // Garante que o valor seja tratado como ano válido
+        filterAnoInput.addEventListener('input', () => {
+            const inputValue = parseInt(filterAnoInput.value, 10);
+            if (isNaN(inputValue) || inputValue < 2000) {
+                filterAnoInput.value = currentYear; // Reseta para o ano atual se inválido
+            }
+        });
+    }
+});
+
+</script>
 {% endblock %}

@@ -91,3 +91,38 @@
     opacity: 1; /* Tornar o cartão visível */
     transform: translateY(0); /* Remover a translação vertical */
 }
+
+/*==================================== 
+       Estilização das tabelas 
+====================================*/
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+}
+
+.table-success {
+    background-color: #e9f7ef !important;
+    font-weight: bold;
+}
+
+/* Animação para as linhas da tabela */
+tbody tr {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Tamanho do gráfico*/
+
+.chart-container {
+    position: relative;
+    width: 100%; /* Ocupar toda a largura do contêiner */
+    max-width: 600px; /* Limite máximo de largura */
+    margin: 0 auto; /* Centraliza o gráfico */
+    height: 400px; /* Altura fixa ou ajustável */
+}

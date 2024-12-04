@@ -150,9 +150,25 @@ def excluir_evento(event_id):
     db.session.commit()
     return '', 200
 
-@app.route('/realizados')
+@app.route('/realizados', methods=['GET'])
 def realizados():
-    eventos_realizados = EventoRealizado.query.all()
+    # Obtém os parâmetros de filtro
+    tipo = request.args.get('tipo', '')
+    mes = request.args.get('mes', '')
+    ano = request.args.get('ano', '')
+
+    # Construindo a query dinâmica
+    query = EventoRealizado.query
+    if tipo:
+        query = query.filter_by(tipo=tipo)
+    if mes:
+        query = query.filter(db.extract('month', EventoRealizado.data) == int(mes))
+    if ano:
+        query = query.filter(db.extract('year', EventoRealizado.data) == int(ano))
+
+    # Obtém os eventos filtrados
+    eventos_realizados = query.order_by(EventoRealizado.data.asc()).all()
+
     return render_template('realizados.html', events=eventos_realizados)
 
 @app.route('/contabilidade')
@@ -184,19 +200,59 @@ def contabilidade():
 
 @app.route('/contabilidade_final')
 def contabilidade_final():
+    # Consulta todos os registros de contabilidade
     contabilidade = Contabilidade.query.all()
+
+    # Calcula os totais
     total_bruto = sum(cont.valor_bruto for cont in contabilidade)
     total_pagamento_musicos = sum(cont.pagamento_musicos for cont in contabilidade)
     total_locacao_som = sum(cont.locacao_som for cont in contabilidade)
     total_outros_custos = sum(cont.outros_custos for cont in contabilidade)
-    total_liquido = sum(cont.valor_liquido for cont in contabilidade)
+    total_liquido = total_bruto - (total_pagamento_musicos + total_locacao_som + total_outros_custos)
 
-    return render_template('contabilidade_final.html',
-                           total_bruto=total_bruto,
-                           total_pagamento_musicos=total_pagamento_musicos,
-                           total_locacao_som=total_locacao_som,
-                           total_outros_custos=total_outros_custos,
-                           total_liquido=total_liquido)
+    # Dados do gráfico
+    chart_data = {
+        "labels": [
+            "Receita Bruta",
+            "Pagamentos de Músicos",
+            "Locação de Som",
+            "Outros Custos",
+            "Receita Líquida"
+        ],
+        "datasets": [{
+            "label": "Resumo Financeiro",
+            "data": [
+                total_bruto,
+                total_pagamento_musicos,
+                total_locacao_som,
+                total_outros_custos,
+                total_liquido
+            ],
+            "backgroundColor": [
+                "#4e73df",  # Azul
+                "#e74a3b",  # Vermelho
+                "#f6c23e",  # Amarelo
+                "#1cc88a",  # Verde
+                "#36b9cc"   # Ciano
+            ]
+        }]
+    }
+
+    # Estatísticas adicionais
+    total_eventos = len(contabilidade)
+    media_receita_liquida = total_liquido / total_eventos if total_eventos > 0 else 0
+
+    return render_template(
+        'contabilidade_final.html',
+        total_bruto=total_bruto,
+        total_pagamento_musicos=total_pagamento_musicos,
+        total_locacao_som=total_locacao_som,
+        total_outros_custos=total_outros_custos,
+        total_liquido=total_liquido,
+        total_eventos=total_eventos,
+        media_receita_liquida=media_receita_liquida,
+        chart_data=chart_data
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
