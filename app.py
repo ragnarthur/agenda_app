@@ -1,6 +1,13 @@
 ﻿import os
 import locale
-from flask import Flask, render_template, request, redirect, url_for, flash
+import csv
+from io import BytesIO
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from reportlab.pdfgen import canvas
+from flask import Flask, render_template, request, redirect, url_for, flash, make_response
 from flask_migrate import Migrate
 from models import db, Evento, EventoRealizado, Contabilidade
 from datetime import datetime, date
@@ -175,28 +182,169 @@ def realizados():
 def contabilidade():
     # Consulta todos os dados de contabilidade
     contabilidade_data = Contabilidade.query.order_by(Contabilidade.mes_ano.desc()).all()
-    
+
     # Agrupa os eventos por mês/ano
     contabilidade_by_date = defaultdict(list)
     for cont in contabilidade_data:
-        # Verifica se cont.evento e cont.evento.data existem
         if cont.evento and cont.evento.data:
             try:
-                # Tenta converter a data para datetime, caso já não seja
+                # Converte a data do evento para datetime, se necessário
                 event_date = datetime.strptime(cont.evento.data, "%Y-%m-%d") if isinstance(cont.evento.data, str) else cont.evento.data
                 date_key = event_date.strftime("%B/%Y").capitalize()  # Exemplo: Dezembro/2024
             except ValueError:
                 date_key = "Data Inválida"
         else:
             date_key = "Sem Data"
-        
+
         contabilidade_by_date[date_key].append(cont)
-    
-    # Ordena os eventos dentro de cada grupo por data do evento
+
+    # Ordena os eventos dentro de cada grupo por data de realização
     for key in contabilidade_by_date:
-        contabilidade_by_date[key].sort(key=lambda x: x.evento.data if x.evento and x.evento.data else datetime.min)
+        contabilidade_by_date[key].sort(
+            key=lambda x: datetime.strptime(x.data_realizacao, "%Y-%m-%d") if isinstance(x.data_realizacao, str) else x.data_realizacao or datetime.min
+        )
 
     return render_template('contabilidade.html', contabilidade_by_date=contabilidade_by_date)
+
+@app.route('/contabilidade/exportar/csv')
+def export_contabilidade_csv():
+    """Exporta os dados de contabilidade em formato CSV."""
+    contabilidade_data = Contabilidade.query.all()
+    output = []
+
+    # Cabeçalhos do CSV
+    output.append(["Evento", "Data do Evento", "Data de Realização", "Valor Bruto (R$)",
+                   "Pagamentos de Músicos (R$)", "Locação de Som (R$)", "Outros Custos (R$)", "Valor Líquido (R$)", "Status"])
+
+    # Preenchendo os dados
+    for cont in contabilidade_data:
+        # Tratamento para cont.evento ser None
+        if cont.evento:
+            data_evento = (
+                datetime.strptime(cont.evento.data, "%Y-%m-%d") if isinstance(cont.evento.data, str) else cont.evento.data
+            )
+            titulo_evento = cont.evento.titulo
+        else:
+            data_evento = None
+            titulo_evento = "Evento Removido"
+
+        # Tratamento para cont.data_realizacao ser None ou string
+        data_realizacao = (
+            datetime.strptime(cont.data_realizacao, "%Y-%m-%d") if cont.realizado and isinstance(cont.data_realizacao, str) else cont.data_realizacao
+        )
+
+        output.append([
+            titulo_evento,
+            data_evento.strftime("%d/%m/%Y") if data_evento else "-",
+            data_realizacao.strftime("%d/%m/%Y") if cont.realizado and data_realizacao else "Não Realizado",
+            f"{cont.valor_bruto:.2f}",
+            f"{cont.pagamento_musicos:.2f}",
+            f"{cont.locacao_som:.2f}",
+            f"{cont.outros_custos:.2f}",
+            f"{cont.valor_liquido:.2f}",
+            "Finalizado" if cont.realizado else "Pendente"
+        ])
+
+    # Geração do CSV como resposta HTTP
+    si = make_response("\n".join([",".join(row) for row in output]))
+    si.headers["Content-Disposition"] = "attachment; filename=contabilidade.csv"
+    si.headers["Content-type"] = "text/csv"
+    return si
+
+@app.route('/contabilidade/exportar/pdf')
+def export_contabilidade_pdf():
+    """Exporta os dados de contabilidade em formato PDF de maneira profissional, com título."""
+    # Criar um buffer em memória
+    buffer = BytesIO()
+
+    # Configuração do documento
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=landscape(letter),
+        topMargin=20,
+        bottomMargin=20,
+        leftMargin=20,
+        rightMargin=20,
+    )
+    doc.title = "Relatório de Contabilidade"  # Título da aba do PDF
+
+    # Estilos para o título
+    styles = getSampleStyleSheet()
+    title_style = styles["Title"]
+    title_style.alignment = 1  # Centralizar
+
+    # Criar o título
+    title = Paragraph("Relatório de Contabilidade", title_style)
+
+    # Dados do banco
+    contabilidade_data = Contabilidade.query.all()
+
+    # Cabeçalho da tabela
+    data = [
+        [
+            "Evento",
+            "Data do Evento",
+            "Data de Realização",
+            "Valor Bruto (R$)",
+            "Pagamentos (R$)",
+            "Locação (R$)",
+            "Outros Custos (R$)",
+            "Valor Líquido (R$)",
+            "Status",
+        ]
+    ]
+
+    # Adicionar os dados da contabilidade
+    for cont in contabilidade_data:
+        evento = cont.evento_titulo or "Evento Removido"
+
+        # Tratamento seguro para datas
+        data_evento = (
+            datetime.strptime(cont.evento.data, "%Y-%m-%d").strftime("%d/%m/%Y")
+            if cont.evento and isinstance(cont.evento.data, str)
+            else (cont.evento.data.strftime("%d/%m/%Y") if cont.evento and cont.evento.data else "-")
+        )
+        data_realizacao = (
+            datetime.strptime(cont.data_realizacao, "%Y-%m-%d").strftime("%d/%m/%Y")
+            if cont.realizado and isinstance(cont.data_realizacao, str)
+            else (cont.data_realizacao.strftime("%d/%m/%Y") if cont.realizado and cont.data_realizacao else "Não Realizado")
+        )
+
+        data.append([
+            evento,
+            data_evento,
+            data_realizacao,
+            f"{cont.valor_bruto:.2f}",
+            f"{cont.pagamento_musicos:.2f}",
+            f"{cont.locacao_som:.2f}",
+            f"{cont.outros_custos:.2f}",
+            f"{cont.valor_liquido:.2f}",
+            "Finalizado" if cont.realizado else "Pendente",
+        ])
+
+    # Estilo da tabela
+    table = Table(data, repeatRows=1)
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+        ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
+        ("GRID", (0, 0), (-1, -1), 1, colors.black),
+    ]))
+
+    # Construir o documento
+    doc.build([title, table])
+
+    # Enviar o buffer como resposta
+    buffer.seek(0)
+    response = make_response(buffer.read())
+    response.headers["Content-Disposition"] = "attachment; filename=relatorio_contabilidade.pdf"
+    response.headers["Content-Type"] = "application/pdf"
+
+    return response
 
 @app.route('/contabilidade_final')
 def contabilidade_final():
@@ -253,6 +401,7 @@ def contabilidade_final():
         media_receita_liquida=media_receita_liquida,
         chart_data=chart_data
     )
+
 
 if __name__ == '__main__':
     app.run(debug=True)
