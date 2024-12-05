@@ -1,17 +1,20 @@
 ﻿import os
 import locale
 import csv
+import matplotlib.pyplot as plt
 from io import BytesIO
 from reportlab.lib.pagesizes import letter, landscape
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.pdfgen import canvas
-from flask import Flask, render_template, request, redirect, url_for, flash, make_response
+from openpyxl import Workbook
+from openpyxl.drawing.image import Image
+from flask import Flask, render_template, request, redirect, url_for, flash, make_response, send_file
 from flask_migrate import Migrate
 from models import db, Evento, EventoRealizado, Contabilidade
 from datetime import datetime, date
-from collections import defaultdict
+from collections import defaultdict 
 
 app = Flask(__name__)
 
@@ -402,6 +405,115 @@ def contabilidade_final():
         chart_data=chart_data
     )
 
+@app.route('/contabilidade_final/exportar/excel')
+def export_contabilidade_final_excel():
+    """Exporta os dados da contabilidade final em um arquivo Excel com gráfico."""
+
+    # Consulta todos os registros de contabilidade
+    contabilidade = Contabilidade.query.all()
+
+    # Calcula os totais
+    total_bruto = sum(cont.valor_bruto for cont in contabilidade)
+    total_pagamento_musicos = sum(cont.pagamento_musicos for cont in contabilidade)
+    total_locacao_som = sum(cont.locacao_som for cont in contabilidade)
+    total_outros_custos = sum(cont.outros_custos for cont in contabilidade)
+    total_liquido = total_bruto - (total_pagamento_musicos + total_locacao_som + total_outros_custos)
+
+    # Criar o Workbook
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Resumo Financeiro"
+
+    # Ajustar larguras das colunas
+    ws.column_dimensions['A'].width = 25
+    ws.column_dimensions['B'].width = 15
+    ws.column_dimensions['C'].width = 20
+
+    # Adicionar os cabeçalhos
+    ws.append(["Categoria", "Total (R$)", "Percentual (%)"])
+
+    # Calcular percentuais com base no total bruto
+    labels = [
+        "Receita Bruta",
+        "Pagamentos de Músicos",
+        "Locação de Som",
+        "Outros Custos",
+        "Receita Líquida",
+    ]
+    data = [
+        total_bruto,
+        total_pagamento_musicos,
+        total_locacao_som,
+        total_outros_custos,
+        total_liquido,
+    ]
+    percentuais = [
+        100.0,  # Receita Bruta é sempre 100%
+        (total_pagamento_musicos / total_bruto * 100) if total_bruto > 0 else 0,
+        (total_locacao_som / total_bruto * 100) if total_bruto > 0 else 0,
+        (total_outros_custos / total_bruto * 100) if total_bruto > 0 else 0,
+        (total_liquido / total_bruto * 100) if total_bruto > 0 else 0,
+    ]
+
+    for label, value, percentual in zip(labels, data, percentuais):
+        ws.append([label, f"{value:.2f}", f"{percentual:.2f}%"])
+
+    # Criar o gráfico de pizza usando Matplotlib
+    chart_colors = ["#4e73df", "#e74a3b", "#f6c23e", "#1cc88a", "#36b9cc"]
+    plt.figure(figsize=(10, 8))
+    explode = [0.1 if val == max(data) else 0 for val in data]
+
+    # Gerar gráfico com texto dentro das fatias
+    wedges, texts, autotexts = plt.pie(
+        data,
+        labels=None,  # Remover labels padrão
+        autopct=lambda p: f'{p:.2f}%' if p > 0 else '',  # Percentuais dentro das fatias
+        startangle=140,
+        colors=chart_colors,
+        wedgeprops={"edgecolor": "black"},
+        explode=explode
+    )
+
+    # Ajustar o texto dentro das fatias
+    for i, autotext in enumerate(autotexts):
+        autotext.set_text(f"{percentuais[i]:.2f}%")
+        autotext.set_color("white")  # Cor branca para maior contraste
+        autotext.set_fontsize(12)  # Tamanho da fonte
+
+    # Adicionar legenda separada
+    plt.legend(
+        labels=[f"{label}" for label in labels],
+        loc='lower right',
+        bbox_to_anchor=(1.1, -0.1),
+        fontsize=10,
+        title="Categorias"
+    )
+    plt.title("Resumo Financeiro - Contabilidade Final", fontsize=16)
+    plt.axis("equal")  # Garante que o gráfico seja circular
+
+    # Salvar o gráfico em um buffer de memória
+    chart_buffer = BytesIO()
+    plt.savefig(chart_buffer, format='png', bbox_inches='tight')
+    plt.close()
+    chart_buffer.seek(0)
+
+    # Adicionar o gráfico ao Excel
+    img = Image(chart_buffer)
+    img.anchor = "E2"  # Posicionar a imagem na célula E2
+    ws.add_image(img)
+
+    # Salvar o Excel em um buffer de memória
+    excel_buffer = BytesIO()
+    wb.save(excel_buffer)
+    excel_buffer.seek(0)
+
+    # Enviar o arquivo diretamente como resposta
+    return send_file(
+        excel_buffer,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        as_attachment=True,
+        download_name="contabilidade_final.xlsx"
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
