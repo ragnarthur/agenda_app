@@ -4,7 +4,7 @@ import csv
 import matplotlib.pyplot as plt
 from io import BytesIO
 from reportlab.lib.pagesizes import letter, landscape
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.pdfgen import canvas
@@ -514,6 +514,53 @@ def export_contabilidade_final_excel():
         as_attachment=True,
         download_name="contabilidade_final.xlsx"
     )
+
+@app.route('/gerar_contrato', methods=['POST', 'GET'])
+def gerar_contrato():
+    if request.method == 'POST':
+        # Capturar os dados do formulário
+        nome_contratante = request.form['nome_contratante']
+        cpf_cnpj = request.form['cpf_cnpj']
+        endereco = request.form['endereco']
+        numero = request.form['numero']
+        bairro = request.form['bairro']
+        cidade = request.form['cidade']
+        uf = request.form['uf']
+        cep = request.form['cep']
+        telefone = request.form['telefone']
+        tipo_evento = request.form['tipo_evento']
+        data_evento = request.form['data_evento']
+        horario_evento = request.form['horario_evento']
+        local_evento = request.form['local_evento']
+        detalhes_adicionais = request.form['detalhes_adicionais']
+
+        # Montar o endereço completo
+        endereco_completo = f"{endereco}, {numero}, {bairro}, {cidade} - {uf}, CEP: {cep}"
+
+        # Formatar o tipo do contrato
+        if tipo_evento == "Acústico":
+            formato = "Voz, violão e percuteria."
+        elif tipo_evento == "Projeto Cerrado - Band Completa":
+            formato = "Voz, guitarra, baixo, teclado e bateria."
+        elif tipo_evento == "Projeto Cerrado - Band Trio":
+            formato = "Voz, guitarra, baixo e bateria."
+
+        # Renderizar o contrato gerado
+        return render_template(
+            'contrato_modelo.html',
+            nome_contratante=nome_contratante,
+            cpf_cnpj=cpf_cnpj,
+            endereco_completo=endereco_completo,
+            telefone=telefone,
+            tipo_evento=tipo_evento,
+            data_evento=data_evento,
+            horario_evento=horario_evento,
+            local_evento=local_evento,
+            detalhes_adicionais=detalhes_adicionais,
+            formato=formato
+        )
+    else:
+        return render_template('contrato_form.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

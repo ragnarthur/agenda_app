@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerar Contrato Musical</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- IMask.js -->
+    <script src="https://unpkg.com/imask"></script>
+</head>
+<body>
+    <header>
+        <h1 class="text-white bg-dark py-3 text-center">Agenda Digital</h1>
+        <div id="current-datetime" class="text-white text-end p-2 bg-secondary"></div>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('index') }}">Agendar Evento</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('schedule') }}">Eventos Agendados</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('realizados') }}">Eventos Realizados</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('contabilidade') }}">Contabilidade</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('contabilidade_final') }}">Resumo Financeiro</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ url_for('gerar_contrato') }}">Gerar Contrato</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="container my-5">
+        <div class="card bg-light shadow p-4">
+            <div class="card-header bg-class text-center">
+                <h2 class="text-dark">Formulário de Contrato Musical</h2>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('gerar_contrato') }}" method="post" class="needs-validation" novalidate>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="nome_contratante" class="form-label">Nome do Contratante:</label>
+                            <input type="text" id="nome_contratante" name="nome_contratante" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="tipo_documento" class="form-label">Documento:</label>
+                            <select id="tipo_documento" name="tipo_documento" class="form-select" required>
+                                <option value="cpf">CPF</option>
+                                <option value="cnpj">CNPJ</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="documento" class="form-label">CPF/CNPJ:</label>
+                            <input type="text" id="documento" name="documento" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="telefone" class="form-label">Telefone:</label>
+                            <input type="tel" id="telefone" name="telefone" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="celular" class="form-label">Celular:</label>
+                            <input type="tel" id="celular" name="celular" class="form-control" required>
+                        </div>
+                    </div>
+                    <fieldset class="border p-3 mb-3">
+                        <legend class="float-none w-auto px-2">Endereço</legend>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="rua" class="form-label">Rua:</label>
+                                <input type="text" id="rua" name="rua" class="form-control" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="numero" class="form-label">Número:</label>
+                                <input type="text" id="numero" name="numero" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="bairro" class="form-label">Bairro:</label>
+                                <input type="text" id="bairro" name="bairro" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="cidade" class="form-label">Cidade:</label>
+                                <input type="text" id="cidade" name="cidade" class="form-control" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="uf" class="form-label">UF:</label>
+                                <select id="uf" name="uf" class="form-select" required>
+                                    <option value="">Selecione</option>
+                                    <option value="AC">AC</option>
+                                    <option value="AL">AL</option>
+                                    <option value="AP">AP</option>
+                                    <option value="AM">AM</option>
+                                    <!-- Adicionar mais estados -->
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="cep" class="form-label">CEP:</label>
+                                <input type="text" id="cep" name="cep" class="form-control" required>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="tipo_evento" class="form-label">Tipo de Evento:</label>
+                            <select id="tipo_evento" name="tipo_evento" class="form-select" required>
+                                <option value="Acústico">Acústico</option>
+                                <option value="Projeto Cerrado - Band">Projeto Cerrado - Band</option>
+                                <option value="Projeto Cerrado - Band Trio">Projeto Cerrado - Band Trio</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="data_evento" class="form-label">Data do Evento:</label>
+                            <input type="date" id="data_evento" name="data_evento" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="horario_evento" class="form-label">Horário do Evento:</label>
+                            <input type="time" id="horario_evento" name="horario_evento" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="local_evento" class="form-label">Local do Evento:</label>
+                            <input type="text" id="local_evento" name="local_evento" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="detalhes_adicionais" class="form-label">Detalhes Adicionais:</label>
+                        <textarea id="detalhes_adicionais" name="detalhes_adicionais" rows="4" class="form-control"></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">Gerar Contrato</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    <footer class="text-center text-white bg-dark py-3">
+        &copy; 2024 Agenda Digital
+    </footer>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const documentoInput = document.getElementById('documento');
+            const tipoDocumento = document.getElementById('tipo_documento');
+
+            function aplicarMascara() {
+                if (tipoDocumento.value === 'cpf') {
+                    IMask(documentoInput, { mask: '000.000.000-00' });
+                } else if (tipoDocumento.value === 'cnpj') {
+                    IMask(documentoInput, { mask: '00.000.000/0000-00' });
+                }
+            }
+
+            tipoDocumento.addEventListener('change', aplicarMascara);
+
+            IMask(document.getElementById('cep'), { mask: '00000-000' });
+            IMask(document.getElementById('telefone'), { mask: '(00)0000-0000' });
+            IMask(document.getElementById('celular'), { mask: '(00)00000-0000' });
+        });
+    </script>
+</body>
+</html>
