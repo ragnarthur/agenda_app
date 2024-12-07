@@ -15,6 +15,7 @@ from flask_migrate import Migrate
 from models import db, Evento, EventoRealizado, Contabilidade
 from datetime import datetime, date
 from collections import defaultdict 
+from weasyprint import HTML
 
 app = Flask(__name__)
 
@@ -518,49 +519,48 @@ def export_contabilidade_final_excel():
 @app.route('/gerar_contrato', methods=['POST', 'GET'])
 def gerar_contrato():
     if request.method == 'POST':
-        # Capturar os dados do formulário
+        # Captura de dados do formulário
         nome_contratante = request.form['nome_contratante']
-        cpf_cnpj = request.form['cpf_cnpj']
-        endereco = request.form['endereco']
-        numero = request.form['numero']
-        bairro = request.form['bairro']
-        cidade = request.form['cidade']
-        uf = request.form['uf']
-        cep = request.form['cep']
+        cpf_cnpj = request.form['documento']
+        endereco = f"{request.form['rua']}, {request.form['numero']}, {request.form['bairro']}, {request.form['cidade']}, {request.form['uf']} - CEP: {request.form['cep']}"
         telefone = request.form['telefone']
+        celular = request.form['celular']
         tipo_evento = request.form['tipo_evento']
         data_evento = request.form['data_evento']
         horario_evento = request.form['horario_evento']
         local_evento = request.form['local_evento']
         detalhes_adicionais = request.form['detalhes_adicionais']
+        valor_total = request.form['valor_total']
+        locacao_som = request.form['locacao_som']
 
-        # Montar o endereço completo
-        endereco_completo = f"{endereco}, {numero}, {bairro}, {cidade} - {uf}, CEP: {cep}"
-
-        # Formatar o tipo do contrato
-        if tipo_evento == "Acústico":
-            formato = "Voz, violão e percuteria."
-        elif tipo_evento == "Projeto Cerrado - Band Completa":
-            formato = "Voz, guitarra, baixo, teclado e bateria."
-        elif tipo_evento == "Projeto Cerrado - Band Trio":
-            formato = "Voz, guitarra, baixo e bateria."
-
-        # Renderizar o contrato gerado
-        return render_template(
+        # Renderiza o template HTML com os dados do contrato
+        html_content = render_template(
             'contrato_modelo.html',
             nome_contratante=nome_contratante,
             cpf_cnpj=cpf_cnpj,
-            endereco_completo=endereco_completo,
+            endereco=endereco,
             telefone=telefone,
+            celular=celular,
             tipo_evento=tipo_evento,
             data_evento=data_evento,
             horario_evento=horario_evento,
             local_evento=local_evento,
             detalhes_adicionais=detalhes_adicionais,
-            formato=formato
+            valor_total=valor_total,
+            locacao_som=locacao_som
         )
-    else:
-        return render_template('contrato_form.html')
 
+        # Gera o PDF a partir do HTML
+        pdf = HTML(string=html_content).write_pdf()
+
+        # Retorna o PDF como resposta
+        response = make_response(pdf)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = f'attachment; filename=contrato_{nome_contratante}.pdf'
+        return response
+
+    else:
+        return render_template('gerar_contrato.html')
+    
 if __name__ == '__main__':
     app.run(debug=True)

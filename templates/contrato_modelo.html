@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contrato Musical</title>
+    <title>Contrato de Prestação de Serviços Musicais</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -24,97 +24,96 @@
         }
         .assinaturas {
             margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
         }
         .assinaturas div {
-            margin: 30px 0;
+            text-align: center;
+            width: 40%;
+            border-top: 1px solid #333;
+            padding-top: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1 class="text-white bg-dark py-3 text-center">Agenda Digital</h1>
-        <div id="current-datetime" class="text-white text-end p-2 bg-secondary"></div>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url_for('index') }}">Agendar Evento</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('schedule') }}">Eventos Agendados</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('realizados') }}">Eventos Realizados</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('contabilidade') }}">Contabilidade</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('contabilidade_final') }}">Resumo Financeiro</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('gerar_contrato') }}">Gerar Contrato</a>
-                        </li>
-                    </ul>
-                </div>
+    <div class="container my-5">
+        <h1 class="text-center text-primary">Contrato de Prestação de Serviços Musicais</h1>
+
+        <p><strong>Contratante:</strong> {{ nome_contratante }}</p>
+        <p><strong>CPF/CNPJ:</strong> {{ cpf_cnpj }}</p>
+        <p><strong>Endereço:</strong> {{ endereco }}</p>
+        <p><strong>Telefone:</strong> {{ telefone }}</p>
+        <p><strong>Celular:</strong> {{ celular }}</p>
+
+        <h2>Cláusula Primeira - Objeto</h2>
+        <p>O presente contrato tem como objeto a prestação de serviços musicais pelo contratado durante o evento descrito a seguir:</p>
+        <ul>
+            <li><strong>Formato:</strong> {{ formato }}</li>
+            <li><strong>Data:</strong> {{ data_evento }}</li>
+            <li><strong>Horário:</strong> {{ horario_evento }}</li>
+            <li><strong>Local:</strong> {{ local_evento }}</li>
+            <li><strong>Detalhes Adicionais:</strong> {{ detalhes_adicionais }}</li>
+        </ul>
+
+        <h2>Cláusula Segunda - Equipamentos e Logística</h2>
+        {% if locacao_som == "sim" %}
+        <p>O orçamento inclui a locação e operação de equipamentos de som, sendo de responsabilidade do contratado garantir a qualidade técnica dos mesmos.</p>
+        {% else %}
+        <p>O contratante é responsável por fornecer e instalar os equipamentos de som necessários para o evento, devendo garantir que estejam em perfeito estado de funcionamento.</p>
+        {% endif %}
+        <p>O transporte, alimentação e hospedagem, quando aplicável, são de responsabilidade do contratante.</p>
+
+        <h2>Cláusula Terceira - Valor e Condições de Pagamento</h2>
+        <p>O valor total pelo serviço é de R$ {{ valor_total }}.</p>
+        <p>O pagamento será efetuado em duas parcelas:</p>
+        <ul>
+            <li>50% (R$ {{ valor_antecipado }}) até 15 dias antes da data do evento.</li>
+            <li>50% (R$ {{ saldo_final }}) até 1 dia antes da data do evento.</li>
+        </ul>
+        <p>Em caso de atraso nos pagamentos, será aplicada multa de 5% sobre o valor em atraso, além de juros de 1% ao mês.</p>
+
+        <h2>Cláusula Quarta - Direitos e Deveres</h2>
+        <p>O contratado compromete-se a:</p>
+        <ul>
+            <li>Comparecer ao local do evento no horário acordado.</li>
+            <li>Prestar os serviços musicais com qualidade técnica e artística.</li>
+            <li>Fornecer todos os equipamentos incluídos no orçamento, quando aplicável.</li>
+        </ul>
+        <p>O contratante compromete-se a:</p>
+        <ul>
+            <li>Garantir condições adequadas de segurança no local do evento.</li>
+            <li>Realizar os pagamentos conforme as condições estabelecidas.</li>
+            <li>Arcar com custos adicionais que não estejam descritos neste contrato.</li>
+        </ul>
+
+        <h2>Cláusula Quinta - Cancelamento</h2>
+        <p>Em caso de cancelamento do evento por parte do contratante, o valor antecipado não será reembolsado. Caso o cancelamento ocorra por parte do contratado, o valor antecipado será devolvido integralmente, além de multa de 20% sobre o valor total do contrato.</p>
+
+        <h2>Cláusula Sexta - Rescisão</h2>
+        <p>O contrato poderá ser rescindido por qualquer uma das partes mediante aviso prévio de 10 dias. O não cumprimento das cláusulas estabelecidas poderá acarretar penalidades conforme legislação vigente.</p>
+
+        <div class="assinaturas">
+            <div>
+                Contratante<br>
+                _________________________________<br>
+                {{ nome_contratante }}
             </div>
-        </nav>
-    </header>
-    <main>
-        <div class="container my-5">
-            <h1 class="text-center text-primary">Contrato de Prestação de Serviços Musicais</h1>
-            <p><strong>Contratante:</strong> {{ nome_contratante }}</p>
-            <p><strong>CPF/CNPJ:</strong> {{ cpf_cnpj }}</p>
-            <p><strong>Endereço:</strong> {{ endereco }}</p>
-            <p><strong>Telefone:</strong> {{ telefone }}</p>
-
-            <p><strong>Contratado:</strong></p>
-            <p>Arthur Roberto Almeida Araújo</p>
-            <p>CPF: 102.452.576-75</p>
-            <p>Endereço: Rua F, 721, Bairro Catulina II, Monte Carmelo, MG, CEP 38500-000</p>
-
-            <h2>Cláusula Primeira - Objeto</h2>
-            <p>Prestação de serviços musicais no formato:</p>
-            <ul>
-                <li>{{ formato }}</li>
-            </ul>
-            <p><strong>Detalhes do Evento:</strong></p>
-            <p><strong>Data:</strong> {{ data_evento }}</p>
-            <p><strong>Horário:</strong> {{ horario_evento }}</p>
-            <p><strong>Local:</strong> {{ local_evento }}</p>
-            <p><strong>Detalhes Adicionais:</strong> {{ detalhes_adicionais }}</p>
-
-            <h2>Cláusula Segunda - Valor e Pagamento</h2>
-            <p>O valor será acordado posteriormente entre as partes.</p>
-
-            <h2>Cláusula Terceira - Rescisão</h2>
-            <p>O contrato pode ser rescindido por qualquer uma das partes mediante aviso prévio de 10 dias.</p>
-
-            <div class="assinaturas">
-                <div>
-                    _________________________________<br>
-                    Contratante
-                </div>
-                <div>
-                    _________________________________<br>
-                    Contratado
-                </div>
-            </div>
-
-            <div class="text-center mt-4">
-                <a href="{{ url_for('gerar_contrato') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Voltar
-                </a>
-                <button onclick="window.print()" class="btn btn-primary">
-                    <i class="fas fa-download"></i> Baixar Contrato
-                </button>
+            <div>
+                Contratado<br>
+                _________________________________<br>
+                Arthur Roberto Almeida Araújo
             </div>
         </div>
-    </main>
-    <footer class="text-center text-white bg-dark py-3">
-        &copy; 2024 Agenda Digital
-    </footer>
+
+        <div class="footer">
+            &copy; 2024 Agenda Digital. Todos os direitos reservados.
+        </div>
+    </div>
 </body>
 </html>

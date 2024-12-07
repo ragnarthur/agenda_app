@@ -92,9 +92,9 @@
     transform: translateY(0); /* Remover a translação vertical */
 }
 
-/*==================================== 
-       Estilização das tabelas 
-====================================*/
+/* ====================================
+   Estilização das tabelas
+==================================== */
 .table {
     border-radius: 8px;
     overflow: hidden;
@@ -117,12 +117,124 @@ tbody tr {
     transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-/* Tamanho do gráfico*/
-
+/* ====================================
+   Tamanho do gráfico
+==================================== */
 .chart-container {
     position: relative;
     width: 100%; /* Ocupar toda a largura do contêiner */
     max-width: 600px; /* Limite máximo de largura */
     margin: 0 auto; /* Centraliza o gráfico */
     height: 400px; /* Altura fixa ou ajustável */
+}
+
+/* ====================================
+   Estilização para a Rota de Contratos
+==================================== */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+h2 {
+    font-size: 1.8rem;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.card-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    background-color: #f7f7f7;
+    border-bottom: 2px solid #ddd;
+    border-radius: 12px 12px 0 0;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+    color: #555;
+}
+
+input, select, textarea {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 1rem;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+fieldset {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: #fefefe;
+}
+
+legend {
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 0 10px;
+    color: #333;
+}
+
+.btn {
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+footer {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #333;
+    color: #fff;
+    font-size: 0.9rem;
+    margin-top: 30px;
+}
+
+/* ====================================
+   Responsividade
+==================================== */
+@media (max-width: 768px) {
+    .card-header {
+        font-size: 1.2rem;
+    }
+
+    input, select, textarea {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 8px 15px;
+    }
 }
