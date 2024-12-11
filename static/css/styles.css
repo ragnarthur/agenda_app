@@ -13,6 +13,33 @@
 }
 
 /* ====================================
+   Estilização dos Botões de Ações
+==================================== */
+.btn-realizado {
+    background-color: #28a745;
+    color: #fff;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-realizado:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+.btn-excluir {
+    background-color: #dc3545;
+    color: #fff;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-excluir:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+/* ====================================
    Estilização dos Cabeçalhos dos Cartões
 ==================================== */
 .card-header {
@@ -62,23 +89,6 @@
 }
 
 /* ====================================
-   Melhorias na Responsividade
-==================================== */
-@media (max-width: 768px) {
-    .card {
-        margin-bottom: 20px; /* Espaçamento adicional entre cartões em telas menores */
-    }
-
-    .card-header {
-        font-size: 12px; /* Fonte menor para cabeçalhos em telas pequenas */
-    }
-
-    .card-body {
-        font-size: 14px; /* Ajuste no texto do corpo para melhor legibilidade */
-    }
-}
-
-/* ====================================
    Animações Suaves para os Cartões
 ==================================== */
 .event-card {
@@ -90,6 +100,33 @@
 .event-card.visible {
     opacity: 1; /* Tornar o cartão visível */
     transform: translateY(0); /* Remover a translação vertical */
+}
+
+/* ====================================
+   Estilização Dinâmica do Título do Evento
+==================================== */
+.event-title {
+    background-color: #f1f1f1; /* Cor neutra */
+    color: #333;
+    padding: 8px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* ====================================
+   Melhorias na Responsividade
+==================================== */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 20px; /* Espaçamento adicional entre cartões em telas menores */
+    }
+
+    .btn-realizado,
+    .btn-excluir {
+        width: 100%;
+        margin-bottom: 10px;
+    }
 }
 
 /* ====================================

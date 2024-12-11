@@ -10,3 +10,5 @@ instance/agenda.reset_db
 instance/
 
 agenda.db
+
+.env
