@@ -54,7 +54,7 @@
         <h2>Cláusula Primeira - Objeto</h2>
         <p>O presente contrato tem como objeto a prestação de serviços musicais pelo contratado durante o evento descrito a seguir:</p>
         <ul>
-            <li><strong>Formato:</strong> {{ formato }}</li>
+            <li><strong>Formato:</strong> {{ tipo_evento }}</li>
             <li><strong>Data:</strong> {{ data_evento }}</li>
             <li><strong>Horário:</strong> {{ horario_evento }}</li>
             <li><strong>Local:</strong> {{ local_evento }}</li>
@@ -71,13 +71,10 @@
 
         <h2>Cláusula Terceira - Valor e Condições de Pagamento</h2>
         <p>O valor total pelo serviço é de R$ {{ valor_total }}.</p>
-        <p>O pagamento será efetuado em duas parcelas:</p>
-        <ul>
-            <li>50% (R$ {{ valor_antecipado }}) até 15 dias antes da data do evento.</li>
-            <li>50% (R$ {{ saldo_final }}) até 1 dia antes da data do evento.</li>
-        </ul>
-        <p>Em caso de atraso nos pagamentos, será aplicada multa de 5% sobre o valor em atraso, além de juros de 1% ao mês.</p>
 
+        <!-- Ajuste se houver valores antecipados, saldo_final, etc., se esses campos existirem -->
+        <!-- Caso não existam, remova as referências ou ajuste conforme sua lógica -->
+        
         <h2>Cláusula Quarta - Direitos e Deveres</h2>
         <p>O contratado compromete-se a:</p>
         <ul>

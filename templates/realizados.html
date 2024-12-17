@@ -6,7 +6,8 @@
 
     <!-- Barra de Filtro e Busca -->
     <div class="card p-3 mb-4">
-        <form class="row g-3 align-items-center" method="get" action="{{ url_for('realizados') }}">
+        <!-- Ajustar ação do form para eventos.realizados -->
+        <form class="row g-3 align-items-center" method="get" action="{{ url_for('eventos.realizados') }}">
             <div class="col-md-4">
                 <label for="filter_tipo" class="form-label">Filtrar por Tipo</label>
                 <select class="form-select" id="filter_tipo" name="tipo">
@@ -42,7 +43,6 @@
                 <button class="btn btn-primary w-100" type="submit">Filtrar</button>
             </div>
         </form>
-        
     </div>
 
     <!-- Grade de Eventos -->
@@ -69,26 +69,21 @@
     </div>
 </div>
 
-<!-- Adicionando o script para o placeholder dinâmico -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-    const filterAnoInput = document.getElementById('filter_ano');
+        const filterAnoInput = document.getElementById('filter_ano');
+        if (filterAnoInput) {
+            const currentYear = new Date().getFullYear();
+            filterAnoInput.placeholder = currentYear;
+            filterAnoInput.value = filterAnoInput.value || currentYear;
 
-    if (filterAnoInput) {
-        // Define o ano atual como valor padrão, se o campo estiver vazio
-        const currentYear = new Date().getFullYear();
-        filterAnoInput.placeholder = currentYear;
-        filterAnoInput.value = filterAnoInput.value || currentYear;
-
-        // Garante que o valor seja tratado como ano válido
-        filterAnoInput.addEventListener('input', () => {
-            const inputValue = parseInt(filterAnoInput.value, 10);
-            if (isNaN(inputValue) || inputValue < 2000) {
-                filterAnoInput.value = currentYear; // Reseta para o ano atual se inválido
-            }
-        });
-    }
-});
-
+            filterAnoInput.addEventListener('input', () => {
+                const inputValue = parseInt(filterAnoInput.value, 10);
+                if (isNaN(inputValue) || inputValue < 2000) {
+                    filterAnoInput.value = currentYear; 
+                }
+            });
+        }
+    });
 </script>
 {% endblock %}

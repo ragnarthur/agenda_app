@@ -5,12 +5,11 @@
     <h2 class="text-center text-primary mb-4">Resumo Financeiro</h2>
 
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ url_for('export_contabilidade_final_excel') }}" class="btn btn-info mx-2">
+        <a href="{{ url_for('contabilidade.export_contabilidade_final_excel') }}" class="btn btn-info mx-2">
             <i class="fas fa-file-excel"></i> Exportar Excel
         </a>                
     </div>
 
-    <!-- Estatísticas Gerais -->
     <div class="row mb-4">
         <div class="col-md-6 text-center">
             <h5>Total de Eventos Contabilizados</h5>
@@ -22,7 +21,6 @@
         </div>
     </div>
 
-    <!-- Tabela de Resumo Financeiro -->
     <table class="table table-striped table-bordered text-center">
         <thead class="table-dark">
             <tr>
@@ -60,32 +58,26 @@
         </tbody>
     </table>
 
-    <!-- Nota de Rodapé -->
     <div class="text-muted text-center mt-2">
         <small>O percentual refere-se à proporção de cada categoria em relação à Receita Bruta.</small>
     </div>
 
-    <!-- Gráfico Dinâmico -->
     <div class="chart-container mt-5">
         <canvas id="financeChart"></canvas>
     </div>
 
     <div class="text-center mt-4">
-        <a href="{{ url_for('contabilidade') }}" class="btn btn-secondary">
+        <a href="{{ url_for('contabilidade.contabilidade') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Voltar
         </a>
     </div>
 </div>
 
-<!-- Incluindo a biblioteca Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Receber dados do backend em formato JSON
         const financeData = JSON.parse('{{ chart_data | tojson | safe }}');
 
-        // Inicializar o gráfico
         const ctx = document.getElementById('financeChart').getContext('2d');
         new Chart(ctx, {
             type: 'pie',

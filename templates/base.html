@@ -17,26 +17,28 @@
         <div id="current-datetime" class="text-white text-end p-2 bg-secondary"></div>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" href="{{ url_for('index') }}">Agendar Evento</a>
+                <!-- Ajuste do link para o endpoint eventos.index -->
+                <a class="navbar-brand" href="{{ url_for('eventos.index') }}">Agendar Evento</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
+                        <!-- Ajuste dos endpoints para incluir o nome do blueprint -->
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('schedule') }}">Eventos Agendados</a>
+                            <a class="nav-link" href="{{ url_for('eventos.schedule') }}">Eventos Agendados</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('realizados') }}">Eventos Realizados</a>
+                            <a class="nav-link" href="{{ url_for('eventos.realizados') }}">Eventos Realizados</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('contabilidade') }}">Contabilidade</a>
+                            <a class="nav-link" href="{{ url_for('contabilidade.contabilidade') }}">Contabilidade</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('contabilidade_final') }}">Resumo Financeiro</a>
+                            <a class="nav-link" href="{{ url_for('contabilidade.contabilidade_final') }}">Resumo Financeiro</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('gerar_contrato') }}">Gerar Contrato</a>
+                            <a class="nav-link" href="{{ url_for('contratos.gerar_contrato') }}">Gerar Contrato</a>
                         </li>                        
                     </ul>
                 </div>
