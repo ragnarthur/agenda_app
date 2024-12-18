@@ -1,116 +1,177 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contrato de Prestação de Serviços Musicais</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-        }
-        h1 {
-            text-align: center;
+            font-family: "DejaVu Sans", Arial, sans-serif;
             color: #333;
+            line-height: 1.6;
+            margin: 50px;
+            background: #fff;
         }
-        .container {
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 20px;
-            background-color: #f9f9f9;
+
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 20px;
         }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        p, ul {
+            text-align: justify;
+            font-size: 1rem;
+        }
+
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+
+        ul li {
+            margin-bottom: 5px;
+        }
+
+        /* Destaques para termos importantes */
+        strong {
+            color: #2c3e50;
+        }
+
+        .contratante-info {
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .contratante-info p {
+            margin: 5px 0;
+        }
+
         .assinaturas {
             margin-top: 50px;
             display: flex;
             justify-content: space-between;
         }
+
         .assinaturas div {
             text-align: center;
             width: 40%;
             border-top: 1px solid #333;
             padding-top: 10px;
+            font-size: 0.9rem;
         }
+
         .footer {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 30px;
             font-size: 0.9rem;
             color: #666;
+        }
+
+        /* Ajuste do layout da página para PDF */
+        @page {
+            size: A4;
+            margin: 40px;
+        }
+
+        /* Pequenos ajustes tipográficos */
+        li strong {
+            font-weight: 700;
         }
     </style>
 </head>
 <body>
-    <div class="container my-5">
-        <h1 class="text-center text-primary">Contrato de Prestação de Serviços Musicais</h1>
+    <h1>Contrato de Prestação de Serviços Musicais</h1>
 
+    <div class="contratante-info">
         <p><strong>Contratante:</strong> {{ nome_contratante }}</p>
         <p><strong>CPF/CNPJ:</strong> {{ cpf_cnpj }}</p>
         <p><strong>Endereço:</strong> {{ endereco }}</p>
-        <p><strong>Telefone:</strong> {{ telefone }}</p>
-        <p><strong>Celular:</strong> {{ celular }}</p>
+        <p><strong>Telefone:</strong> {{ telefone }} | <strong>Celular:</strong> {{ celular }}</p>
+    </div>
 
-        <h2>Cláusula Primeira - Objeto</h2>
-        <p>O presente contrato tem como objeto a prestação de serviços musicais pelo contratado durante o evento descrito a seguir:</p>
-        <ul>
-            <li><strong>Formato:</strong> {{ tipo_evento }}</li>
-            <li><strong>Data:</strong> {{ data_evento }}</li>
-            <li><strong>Horário:</strong> {{ horario_evento }}</li>
-            <li><strong>Local:</strong> {{ local_evento }}</li>
-            <li><strong>Detalhes Adicionais:</strong> {{ detalhes_adicionais }}</li>
-        </ul>
+    <h2>Cláusula 1ª - Objeto</h2>
+    <p>O presente contrato tem por objeto a prestação de serviços musicais pelo CONTRATADO durante o evento do CONTRATANTE, conforme descrito a seguir:</p>
+    <ul>
+        <li><strong>Tipo de Evento:</strong> {{ tipo_evento }}</li>
+        <li><strong>Data do Evento:</strong> {{ data_evento }}</li>
+        <li><strong>Horário do Evento:</strong> {{ horario_evento }}</li>
+        <li><strong>Local do Evento:</strong> {{ local_evento }}</li>
+        <li><strong>Detalhes Adicionais:</strong> {{ detalhes_adicionais if detalhes_adicionais else "Não há." }}</li>
+    </ul>
 
-        <h2>Cláusula Segunda - Equipamentos e Logística</h2>
-        {% if locacao_som == "sim" %}
-        <p>O orçamento inclui a locação e operação de equipamentos de som, sendo de responsabilidade do contratado garantir a qualidade técnica dos mesmos.</p>
-        {% else %}
-        <p>O contratante é responsável por fornecer e instalar os equipamentos de som necessários para o evento, devendo garantir que estejam em perfeito estado de funcionamento.</p>
-        {% endif %}
-        <p>O transporte, alimentação e hospedagem, quando aplicável, são de responsabilidade do contratante.</p>
+    <h2>Cláusula 2ª - Equipamentos e Logística</h2>
+    {% if locacao_som == "sim" %}
+    <p>O valor contratado inclui a locação e operação dos equipamentos de som necessários, sendo responsabilidade do CONTRATADO garantir a qualidade técnica dos mesmos. O CONTRATANTE se obriga a disponibilizar condições adequadas de acesso e segurança para instalação, operação e remoção dos equipamentos.</p>
+    {% else %}
+    <p>O CONTRATANTE será responsável por disponibilizar e instalar todos os equipamentos de som necessários, garantindo seu perfeito funcionamento. O CONTRATADO não se responsabiliza pela qualidade dos equipamentos fornecidos pelo CONTRATANTE.</p>
+    {% endif %}
+    <p>O transporte, alimentação e hospedagem, quando necessários ao CONTRATADO, serão de responsabilidade do CONTRATANTE, salvo acordo diverso entre as partes.</p>
 
-        <h2>Cláusula Terceira - Valor e Condições de Pagamento</h2>
-        <p>O valor total pelo serviço é de R$ {{ valor_total }}.</p>
+    <h2>Cláusula 3ª - Valor e Condições de Pagamento</h2>
+    <p>O valor total dos serviços é de <strong>{{ valor_total }}</strong>. O pagamento será efetuado nas seguintes condições:</p>
+    <ul>
+        <li>50% (<strong>{{ valor_antecipado }}</strong>) até 15 (quinze) dias antes da data do evento;</li>
+        <li>50% (<strong>{{ saldo_final }}</strong>) até 1 (um) dia antes da data do evento.</li>
+    </ul>
+    <p>Em caso de atraso no pagamento, incidirá multa de 5% (cinco por cento) sobre o valor em atraso, acrescida de juros de mora de 1% (um por cento) ao mês, calculados pro rata die.</p>
 
-        <!-- Ajuste se houver valores antecipados, saldo_final, etc., se esses campos existirem -->
-        <!-- Caso não existam, remova as referências ou ajuste conforme sua lógica -->
-        
-        <h2>Cláusula Quarta - Direitos e Deveres</h2>
-        <p>O contratado compromete-se a:</p>
-        <ul>
-            <li>Comparecer ao local do evento no horário acordado.</li>
-            <li>Prestar os serviços musicais com qualidade técnica e artística.</li>
-            <li>Fornecer todos os equipamentos incluídos no orçamento, quando aplicável.</li>
-        </ul>
-        <p>O contratante compromete-se a:</p>
-        <ul>
-            <li>Garantir condições adequadas de segurança no local do evento.</li>
-            <li>Realizar os pagamentos conforme as condições estabelecidas.</li>
-            <li>Arcar com custos adicionais que não estejam descritos neste contrato.</li>
-        </ul>
+    <h2>Cláusula 4ª - Obrigações do CONTRATADO</h2>
+    <p>O CONTRATADO compromete-se a:</p>
+    <ul>
+        <li>Comparecer ao local do evento na data e horário acordados;</li>
+        <li>Prestar os serviços musicais com qualidade técnica e artística adequadas;</li>
+        <li>Fornecer os equipamentos incluídos no orçamento, se contratada a opção de locação de som.</li>
+    </ul>
 
-        <h2>Cláusula Quinta - Cancelamento</h2>
-        <p>Em caso de cancelamento do evento por parte do contratante, o valor antecipado não será reembolsado. Caso o cancelamento ocorra por parte do contratado, o valor antecipado será devolvido integralmente, além de multa de 20% sobre o valor total do contrato.</p>
+    <h2>Cláusula 5ª - Obrigações do CONTRATANTE</h2>
+    <p>O CONTRATANTE obriga-se a:</p>
+    <ul>
+        <li>Fornecer condições adequadas de segurança, iluminação e acesso ao local do evento;</li>
+        <li>Efetuar os pagamentos conforme as condições estabelecidas na Cláusula 3ª;</li>
+        <li>Arcar com custos adicionais não previstos, mediante prévia aprovação do CONTRATADO.</li>
+    </ul>
 
-        <h2>Cláusula Sexta - Rescisão</h2>
-        <p>O contrato poderá ser rescindido por qualquer uma das partes mediante aviso prévio de 10 dias. O não cumprimento das cláusulas estabelecidas poderá acarretar penalidades conforme legislação vigente.</p>
+    <h2>Cláusula 6ª - Cancelamento</h2>
+    <p>Em caso de cancelamento do evento por parte do CONTRATANTE, o valor antecipado não será devolvido, a título de taxa de reserva. Caso o cancelamento ocorra por parte do CONTRATADO, este devolverá integralmente o valor antecipado, acrescido de multa de 20% (vinte por cento) sobre o valor total do contrato.</p>
 
-        <div class="assinaturas">
-            <div>
-                Contratante<br>
-                _________________________________<br>
-                {{ nome_contratante }}
-            </div>
-            <div>
-                Contratado<br>
-                _________________________________<br>
-                Arthur Roberto Almeida Araújo
-            </div>
+    <h2>Cláusula 7ª - Rescisão</h2>
+    <p>O presente contrato poderá ser rescindido por qualquer das partes, mediante aviso prévio de 10 (dez) dias, desde que não haja pendências financeiras ou compromissos contratuais inadiáveis. O descumprimento de quaisquer cláusulas poderá acarretar responsabilidade civil, conforme legislação aplicável.</p>
+
+    <h2>Cláusula 8ª - Foro</h2>
+    <p>Fica eleito o foro da Comarca do local do evento para dirimir quaisquer controvérsias oriundas do presente contrato, com renúncia de qualquer outro, por mais privilegiado que seja.</p>
+
+    <div class="assinaturas">
+        <div>
+            CONTRATANTE<br>
+            _________________________________<br>
+            {{ nome_contratante }}
         </div>
-
-        <div class="footer">
-            &copy; 2024 Agenda Digital. Todos os direitos reservados.
+        <div>
+            CONTRATADO<br>
+            _________________________________<br>
+            Arthur Roberto Almeida Araújo
         </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2024 Agenda Digital. Todos os direitos reservados.
     </div>
 </body>
 </html>

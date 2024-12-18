@@ -18,7 +18,8 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
                 <a class="navbar-brand" href="{{ url_for('eventos.index') }}">Agendar Evento</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
@@ -230,6 +231,21 @@
             IMask(document.getElementById('cep'), { mask: '00000-000' });
             IMask(document.getElementById('telefone'), { mask: '(00)0000-0000' });
             IMask(document.getElementById('celular'), { mask: '(00)00000-0000' });
+
+            // Ajuste da máscara APENAS para o campo valor_total
+            IMask(document.getElementById('valor_total'), {
+                mask: Number,
+                scale: 2,
+                signed: false,
+                thousandsSeparator: '.',
+                padFractionalZeros: true,
+                normalizeZeros: true,
+                radix: ',',
+                mapToRadix: ['.'],
+                prefix: 'R$ ',
+                lazy: false,
+                max: 9999999999999
+            });
         });
     </script>
 </body>
