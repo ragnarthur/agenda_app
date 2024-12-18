@@ -21,14 +21,24 @@ def contabilidade():
     contabilidade_data = Contabilidade.query.order_by(Contabilidade.mes_ano.desc()).all()
     contabilidade_by_date = defaultdict(list)
     for cont in contabilidade_data:
+        # Tentar obter a data do evento
         if cont.evento and cont.evento.data:
-            try:
-                event_date = datetime.strptime(cont.evento.data, "%Y-%m-%d") if isinstance(cont.evento.data, str) else cont.evento.data
-                date_key = event_date.strftime("%B/%Y").capitalize()
-            except ValueError:
-                date_key = "Data Inválida"
+            # Evento ainda existe
+            if isinstance(cont.evento.data, str):
+                event_date = datetime.strptime(cont.evento.data, "%Y-%m-%d")
+            else:
+                event_date = cont.evento.data
+        elif cont.data_evento_original:
+            # Usa a data salva no contabilidade
+            event_date = datetime.strptime(cont.data_evento_original, "%Y-%m-%d")
+        else:
+            event_date = None
+
+        if event_date:
+            date_key = event_date.strftime("%B/%Y").capitalize()
         else:
             date_key = "Sem Data"
+
         contabilidade_by_date[date_key].append(cont)
 
     for key in contabilidade_by_date:

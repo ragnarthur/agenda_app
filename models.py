@@ -31,5 +31,6 @@ class Contabilidade(db.Model):
     mes_ano = db.Column(db.String(7), nullable=True)
     realizado = db.Column(db.Boolean, nullable=False, default=False)
     data_realizacao = db.Column(db.String(10), nullable=True)
-
+    data_evento_original = db.Column(db.String(10), nullable=True)  # Nova coluna
+    
     evento = db.relationship('Evento', backref=db.backref('contabilidade', uselist=False))

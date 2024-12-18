@@ -19,7 +19,7 @@ def index():
 def agendar():
     tipo = request.form['tipo']
     titulo = request.form['titulo']
-    data = request.form['data']
+    data = request.form['data']  # Formato YYYY-MM-DD
     hora = request.form['hora']
     descricao = request.form['descricao']
 
@@ -29,6 +29,7 @@ def agendar():
     outros_custos = parse_currency(request.form.get('outros_custos', '0'))
     valor_liquido = valor_bruto - (pagamento_musicos + locacao_som + outros_custos)
 
+    # Cria o evento
     novo_evento = Evento(
         tipo=tipo,
         titulo=titulo,
@@ -39,6 +40,7 @@ def agendar():
     db.session.add(novo_evento)
     db.session.commit()
 
+    # Cria a contabilidade se houver valor bruto
     if valor_bruto > 0:
         nova_contabilidade = Contabilidade(
             evento_id=novo_evento.id,
@@ -48,7 +50,8 @@ def agendar():
             locacao_som=locacao_som,
             outros_custos=outros_custos,
             valor_liquido=valor_liquido,
-            mes_ano=f"{data.split('-')[1]}/{data.split('-')[0]}" 
+            mes_ano=f"{data.split('-')[1]}/{data.split('-')[0]}",
+            data_evento_original=data  # Armazena a data original do evento
         )
         db.session.add(nova_contabilidade)
         db.session.commit()
@@ -83,6 +86,11 @@ def marcar_como_realizado(event_id):
             contabilidade.realizado = True
             contabilidade.evento_titulo = evento.titulo
             contabilidade.data_realizacao = datetime.now().strftime("%Y-%m-%d")
+            # Salvar a data original do evento
+            if isinstance(evento.data, date):
+                contabilidade.data_evento_original = evento.data.strftime("%Y-%m-%d")
+            else:
+                contabilidade.data_evento_original = evento.data  # se já estiver no formato str YYYY-MM-DD
 
         db.session.delete(evento)
         db.session.commit()

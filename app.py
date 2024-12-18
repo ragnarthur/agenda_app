@@ -6,17 +6,17 @@ from dotenv import load_dotenv
 from models import db
 from config import Config
 
-# Carrega as variáveis de ambiente
+# Carregar variáveis de ambiente do .env
 load_dotenv()
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Inicializar banco e migração
+# Inicializar banco de dados e migrações
 db.init_app(app)
 migrate = Migrate(app, db)
 
-# Definir locale para português do Brasil
+# Definir locale para Português do Brasil
 locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
 
 # Importar e registrar Blueprints
