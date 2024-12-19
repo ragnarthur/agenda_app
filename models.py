@@ -34,3 +34,11 @@ class Contabilidade(db.Model):
     data_evento_original = db.Column(db.String(10), nullable=True)  # Nova coluna
     
     evento = db.relationship('Evento', backref=db.backref('contabilidade', uselist=False))
+
+class Aluno(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    cpf_cnpj = db.Column(db.String(20), nullable=False)
+    endereco = db.Column(db.String(200), nullable=False)
+    tipo_aula = db.Column(db.String(20), nullable=False)  # "teclado", "guitarra" ou "violao"
+    modalidade = db.Column(db.String(20), nullable=False) # "semanal" ou "avulsa"

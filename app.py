@@ -19,14 +19,18 @@ migrate = Migrate(app, db)
 # Definir locale para Português do Brasil
 locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
 
-# Importar e registrar Blueprints
 from controllers.eventos import eventos_bp
 from controllers.contabilidade import contabilidade_bp
 from controllers.contratos import contratos_bp
+from controllers.alunos import alunos_bp
 
 app.register_blueprint(eventos_bp)
 app.register_blueprint(contabilidade_bp)
 app.register_blueprint(contratos_bp)
+app.register_blueprint(alunos_bp)
 
 if __name__ == '__main__':
+    # Garantir a criação das tabelas antes de rodar
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)

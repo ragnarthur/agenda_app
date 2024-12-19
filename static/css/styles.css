@@ -275,3 +275,19 @@ footer {
         padding: 8px 15px;
     }
 }
+
+/* ====================================
+   Estilização adicional para a Navbar e Dropdown
+==================================== */
+/* Aumentar a fonte da navbar */
+.navbar-nav .nav-link {
+    font-size: 1.1rem;
+}
+
+/* Dropdowns mais minimalistas */
+.dropdown-menu {
+    font-size: 1rem;
+    border-radius: 0;
+    border: 1px solid #ddd;
+    box-shadow: none;
+}

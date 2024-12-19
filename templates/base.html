@@ -10,36 +10,88 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <!-- IMask.js -->
     <script src="https://unpkg.com/imask"></script>
+    <!-- Font Awesome (opcional para ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+    <style>
+        /* Ajustes adicionais direto aqui, se necessário */
+        header h1 {
+            font-size: 2.2rem;
+        }
+
+        .navbar {
+            min-height: 70px; /* Aumenta a altura da navbar */
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem !important; /* Aumenta a fonte do logo */
+        }
+
+        .navbar-nav .nav-link {
+            font-size: 1.2rem !important; /* Aumenta ainda mais a fonte dos itens do menu */
+            padding: 0.8rem 1.2rem; /* Aumenta o padding para deixar mais "espacado" */
+        }
+
+        .dropdown-menu {
+            font-size: 1.1rem; /* Aumentar levemente o tamanho da fonte no dropdown */
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1 class="text-white bg-dark py-3 text-center">Agenda Digital</h1>
-        <div id="current-datetime" class="text-white text-end p-2 bg-secondary"></div>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <header class="bg-dark text-white">
+        <h1 class="py-3 text-center">Agenda Digital</h1>
+        <div id="current-datetime" class="text-end p-2 bg-secondary"></div>
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #f8f9fa;">
             <div class="container">
-                <!-- Ajuste do link para o endpoint eventos.index -->
-                <a class="navbar-brand" href="{{ url_for('eventos.index') }}">Agendar Evento</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand fw-bold text-primary" href="{{ url_for('eventos.schedule') }}">
+                    <i class="fa fa-calendar-check"></i> Agenda Digital
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <!-- Ajuste dos endpoints para incluir o nome do blueprint -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('eventos.schedule') }}">Eventos Agendados</a>
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        
+                        <!-- Acesso rápido -->
+                        <li class="nav-item me-3">
+                            <a class="nav-link text-primary fw-bold" href="{{ url_for('eventos.index') }}">
+                                <i class="fa fa-plus-circle"></i> Agendar Evento
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('eventos.realizados') }}">Eventos Realizados</a>
+
+                        <!-- Dropdown Eventos -->
+                        <li class="nav-item dropdown me-3">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="eventosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Eventos
+                            </a>
+                            <ul class="dropdown-menu shadow-sm border-0" aria-labelledby="eventosDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('eventos.schedule') }}"><i class="fa fa-list"></i> Eventos Agendados</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('eventos.realizados') }}"><i class="fa fa-check"></i> Eventos Realizados</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('contabilidade.contabilidade') }}">Contabilidade</a>
+
+                        <!-- Dropdown Finanças -->
+                        <li class="nav-item dropdown me-3">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="financasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Finanças
+                            </a>
+                            <ul class="dropdown-menu shadow-sm border-0" aria-labelledby="financasDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('contabilidade.contabilidade') }}"><i class="fa fa-file-invoice-dollar"></i> Contabilidade</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('contabilidade.contabilidade_final') }}"><i class="fa fa-chart-pie"></i> Resumo Financeiro</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('contabilidade.contabilidade_final') }}">Resumo Financeiro</a>
+
+                        <!-- Dropdown Serviços -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="servicosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Serviços
+                            </a>
+                            <ul class="dropdown-menu shadow-sm border-0" aria-labelledby="servicosDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('contratos.gerar_contrato') }}"><i class="fa fa-file-contract"></i> Gerar Contrato</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('alunos.adicionar_aluno') }}"><i class="fa fa-user-plus"></i> Cadastrar Aluno</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('contratos.gerar_contrato') }}">Gerar Contrato</a>
-                        </li>                        
+
                     </ul>
                 </div>
             </div>

@@ -11,8 +11,11 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from collections import defaultdict
 from models import db, Contabilidade
-from flask import request
+from flask import request, url_for
 import locale
+
+# Importar o modelo Aluno para integrar às contas
+from models import Aluno
 
 contabilidade_bp = Blueprint('contabilidade', __name__, url_prefix='/contabilidade')
 
@@ -23,7 +26,6 @@ def contabilidade():
     for cont in contabilidade_data:
         # Tentar obter a data do evento
         if cont.evento and cont.evento.data:
-            # Evento ainda existe
             if isinstance(cont.evento.data, str):
                 event_date = datetime.strptime(cont.evento.data, "%Y-%m-%d")
             else:
@@ -177,6 +179,24 @@ def contabilidade_final():
     total_outros_custos = sum(cont.outros_custos for cont in contabilidade)
     total_liquido = total_bruto - (total_pagamento_musicos + total_locacao_som + total_outros_custos)
 
+    # Integração com Alunos: 
+    # Aulas mensais (semanal) = R$300
+    # Aulas avulsas = R$100
+    alunos = Aluno.query.all()
+    receita_aulas = 0
+    for aluno in alunos:
+        if aluno.modalidade == 'semanal':
+            receita_aulas += 300
+        elif aluno.modalidade == 'avulsa':
+            receita_aulas += 100
+
+    # Somar a receita das aulas ao total_bruto e total_liquido
+    total_bruto += receita_aulas
+    total_liquido += receita_aulas
+
+    total_eventos = len(contabilidade)
+    media_receita_liquida = total_liquido / total_eventos if total_eventos > 0 else 0
+
     chart_data = {
         "labels": [
             "Receita Bruta",
@@ -204,9 +224,6 @@ def contabilidade_final():
         }]
     }
 
-    total_eventos = len(contabilidade)
-    media_receita_liquida = total_liquido / total_eventos if total_eventos > 0 else 0
-
     return render_template(
         'contabilidade_final.html',
         total_bruto=total_bruto,
@@ -229,6 +246,18 @@ def export_contabilidade_final_excel():
     total_outros_custos = sum(cont.outros_custos for cont in contabilidade)
     total_liquido = total_bruto - (total_pagamento_musicos + total_locacao_som + total_outros_custos)
 
+    # Integração com Alunos na exportação excel também
+    alunos = Aluno.query.all()
+    receita_aulas = 0
+    for aluno in alunos:
+        if aluno.modalidade == 'semanal':
+            receita_aulas += 300
+        elif aluno.modalidade == 'avulsa':
+            receita_aulas += 100
+
+    total_bruto += receita_aulas
+    total_liquido += receita_aulas
+
     total_eventos = len(contabilidade)
     media_receita_liquida = total_liquido / total_eventos if total_eventos > 0 else 0
 
@@ -237,8 +266,8 @@ def export_contabilidade_final_excel():
     from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 
     # Cores e estilos
-    header_fill = PatternFill(start_color="4F81BD", end_color="4F81BD", fill_type="solid")  # Azul do Excel
-    header_font = Font(color="FFFFFF", bold=True)  # Texto branco e negrito
+    header_fill = PatternFill(start_color="4F81BD", end_color="4F81BD", fill_type="solid")
+    header_font = Font(color="FFFFFF", bold=True)
     bold_font = Font(bold=True)
     center_align = Alignment(horizontal="center", vertical="center")
     thin_border = Border(left=Side(style='thin'), right=Side(style='thin'),
@@ -248,21 +277,17 @@ def export_contabilidade_final_excel():
     ws = wb.active
     ws.title = "Resumo Financeiro"
 
-    # Ajustar larguras de colunas
     ws.column_dimensions['A'].width = 40
     ws.column_dimensions['B'].width = 20
     ws.column_dimensions['C'].width = 20
 
-    # Linha 1: Total de Eventos Contabilizados
     ws.append(["Total de Eventos Contabilizados", total_eventos])
-    # Estilizar
     ws["A1"].font = bold_font
     ws["A1"].alignment = center_align
     ws["A1"].border = thin_border
     ws["B1"].alignment = center_align
     ws["B1"].border = thin_border
 
-    # Linha 2: Média de Receita Líquida
     ws.append(["Média de Receita Líquida por Evento (R$)", f"{media_receita_liquida:.2f}"])
     ws["A2"].font = bold_font
     ws["A2"].alignment = center_align
@@ -270,12 +295,9 @@ def export_contabilidade_final_excel():
     ws["B2"].alignment = center_align
     ws["B2"].border = thin_border
 
-    ws.append([])  # Linha em branco para separação
+    ws.append([])
 
-    # Cabeçalho da tabela de categorias
     ws.append(["Categoria", "Total (R$)", "Percentual (%)"])
-
-    # Estilizar o cabeçalho da tabela (linha 4)
     for cell in ws[4]:
         cell.font = header_font
         cell.fill = header_fill
@@ -304,11 +326,9 @@ def export_contabilidade_final_excel():
         (total_liquido / total_bruto * 100) if total_bruto > 0 else 0,
     ]
 
-    # Adicionar linhas da tabela de categorias
     row_start = 5
     for i, (label, value, percentual) in enumerate(zip(labels, data, percentuais), start=row_start):
         ws.append([label, f"{value:.2f}", f"{percentual:.2f}%"])
-        # Estilizar as células
         ws[f"A{i}"].font = Font(bold=True) if label == "Receita Líquida" else None
         ws[f"A{i}"].alignment = center_align
         ws[f"A{i}"].border = thin_border
@@ -319,13 +339,11 @@ def export_contabilidade_final_excel():
         ws[f"C{i}"].alignment = center_align
         ws[f"C{i}"].border = thin_border
 
-        # Destacar linha da Receita Líquida
         if label == "Receita Líquida":
             ws[f"A{i}"].fill = PatternFill(start_color="DFF0D8", end_color="DFF0D8", fill_type="solid")
             ws[f"B{i}"].fill = PatternFill(start_color="DFF0D8", end_color="DFF0D8", fill_type="solid")
             ws[f"C{i}"].fill = PatternFill(start_color="DFF0D8", end_color="DFF0D8", fill_type="solid")
 
-    # Gerar o gráfico de pizza
     import matplotlib.pyplot as plt
     from io import BytesIO
     plt.figure(figsize=(10, 8))
@@ -362,7 +380,6 @@ def export_contabilidade_final_excel():
     chart_buffer.seek(0)
 
     img = Image(chart_buffer)
-    # Posicionar a imagem (por exemplo, após alguns dados, na célula E2)
     img.anchor = "E2"
     ws.add_image(img)
 
