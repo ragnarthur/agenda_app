@@ -35,51 +35,28 @@
                 <tbody>
                     {% for cont in events %}
                     <tr>
+                        <td>{{ cont['titulo'] }}</td>
+                        <td>{{ cont['data_evento'] | default('-') }}</td>
+                        <td>{{ cont['data_realizacao'] | default('Não Realizado') }}</td>
+                        <td>R$ {{ cont['valor_bruto'] | round(2) }}</td>
+                        <td>R$ {{ cont['pagamento_musicos'] | round(2) }}</td>
+                        <td>R$ {{ cont['locacao_som'] | round(2) }}</td>
+                        <td>R$ {{ cont['outros_custos'] | round(2) }}</td>
+                        <td>R$ {{ cont['valor_liquido'] | round(2) }}</td>
                         <td>
-                            {% if cont.evento %}
-                                {{ cont.evento.titulo }}
-                            {% elif cont.evento_titulo %}
-                                {{ cont.evento_titulo }}
-                            {% else %}
-                                Evento Removido
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if cont.evento %}
-                                {{ cont.evento.data | format_datetime }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if cont.realizado and cont.data_realizacao %}
-                                {{ cont.data_realizacao | format_datetime }}
-                            {% else %}
-                                Não Realizado
-                            {% endif %}
-                        </td>
-                        <td>R$ {{ cont.valor_bruto | round(2) }}</td>
-                        <td>R$ {{ cont.pagamento_musicos | round(2) }}</td>
-                        <td>R$ {{ cont.locacao_som | round(2) }}</td>
-                        <td>R$ {{ cont.outros_custos | round(2) }}</td>
-                        <td>R$ {{ cont.valor_liquido | round(2) }}</td>
-                        <td>
-                            {% if cont.realizado %}
+                            {% if cont['status'] == 'Finalizado' %}
                                 <span class="badge bg-success">Finalizado</span>
                             {% else %}
                                 <span class="badge bg-warning text-dark">Pendente</span>
                             {% endif %}
                         </td>
                         <td>
-                            {% if cont.realizado %}
-                                <span class="text-muted d-block text-center">Evento finalizado</span>
-                            {% elif cont.evento_id %}
-                                <!-- Ajustar rota para eventos.excluir_evento -->
-                                <form action="{{ url_for('eventos.excluir_evento', event_id=cont.evento_id) }}" method="post">
-                                    <button class="btn btn-danger btn-sm w-100">Excluir</button>
-                                </form>
+                            {% if cont['evento_id'] %}
+                            <form action="{{ url_for('eventos.excluir_evento', event_id=cont['evento_id']) }}" method="post">
+                                <button class="btn btn-danger btn-sm">Excluir</button>
+                            </form>
                             {% else %}
-                                <span class="text-muted">Ação não disponível</span>
+                            <p class="text-muted">Evento removido.</p>
                             {% endif %}
                         </td>
                     </tr>

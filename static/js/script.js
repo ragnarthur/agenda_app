@@ -52,11 +52,19 @@
         if (!button) return;
 
         const eventId = button.getAttribute('data-event-id');
-        fetch(`/realizado/${eventId}`, { method: 'POST' })
+        fetch(`/eventos/realizado/${eventId}`, { method: 'POST' })
             .then(response => {
                 if (response.ok) {
                     const card = button.closest('.event-card');
-                    if (card) card.remove(); // Remove o card da lista de eventos agendados
+                    if (card) {
+                        card.addEventListener('transitionend', () => {
+                            card.remove();
+                            reorganizeCards();
+                        });
+                        card.style.transition = 'opacity 0.5s, transform 0.5s';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.9)';
+                    }
                 } else {
                     console.error('Erro ao marcar como realizado');
                     alert('Não foi possível marcar o evento como realizado.');
@@ -74,13 +82,22 @@
         if (!button) return;
 
         const eventId = button.getAttribute('data-event-id');
-        fetch(`/excluir/${eventId}`, { method: 'POST' })
+        fetch(`/eventos/excluir/${eventId}`, { method: 'POST' })
             .then(response => {
                 if (response.ok) {
                     const card = button.closest('.event-card');
-                    if (card) card.remove(); // Remove o card da lista de eventos agendados
+                    if (card) {
+                        card.addEventListener('transitionend', () => {
+                            card.remove();
+                            reorganizeCards();
+                        });
+                        card.style.transition = 'opacity 0.5s, transform 0.5s';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.9)';
+                    }
+                } else if (response.status === 404) {
+                    alert('Evento não encontrado.');
                 } else {
-                    console.error('Erro ao excluir evento');
                     alert('Não foi possível excluir o evento.');
                 }
             })
@@ -88,6 +105,18 @@
                 console.error('Erro de conexão:', error);
                 alert('Erro de conexão ao tentar excluir o evento.');
             });
+    };
+
+    // Função para reorganizar os cartões após exclusão
+    const reorganizeCards = () => {
+        const row = document.querySelector('.row');
+        if (row) {
+            const cards = Array.from(row.children);
+            cards.forEach((card, index) => {
+                card.style.transition = 'transform 0.3s ease';
+                card.style.order = index;
+            });
+        }
     };
 
     // Adicionar eventos de clique para botões de "Realizado" e "Excluir"
@@ -138,14 +167,3 @@
         }
     });
 });
-
-document.addEventListener('DOMContentLoaded', () => {
-    const tableRows = document.querySelectorAll('tbody tr');
-    tableRows.forEach((row, index) => {
-        setTimeout(() => {
-            row.style.opacity = '1';
-            row.style.transform = 'translateY(0)';
-        }, index * 150);
-    });
-});
-

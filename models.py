@@ -10,6 +10,10 @@ class Evento(db.Model):
     hora = db.Column(db.String(5), nullable=False)
     descricao = db.Column(db.Text, nullable=True)
     repetir = db.Column(db.Boolean, default=False)
+    
+    # Relacionamento com EventoRealizado e Contabilidade
+    evento_realizado = db.relationship('EventoRealizado', backref='evento', lazy=True)
+    contabilidade = db.relationship('Contabilidade', backref='evento', uselist=False)
 
 class EventoRealizado(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -18,10 +22,11 @@ class EventoRealizado(db.Model):
     data = db.Column(db.String(10), nullable=False)
     hora = db.Column(db.String(5), nullable=False)
     descricao = db.Column(db.Text, nullable=True)
+    evento_id = db.Column(db.Integer, db.ForeignKey('evento.id', ondelete='SET NULL'), nullable=True)
 
 class Contabilidade(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    evento_id = db.Column(db.Integer, db.ForeignKey('evento.id'), nullable=True)
+    evento_id = db.Column(db.Integer, db.ForeignKey('evento.id', ondelete='SET NULL'), nullable=True)
     evento_titulo = db.Column(db.String(100), nullable=True)
     valor_bruto = db.Column(db.Float, nullable=False, default=0.0)
     pagamento_musicos = db.Column(db.Float, nullable=False, default=0.0)
@@ -31,9 +36,7 @@ class Contabilidade(db.Model):
     mes_ano = db.Column(db.String(7), nullable=True)
     realizado = db.Column(db.Boolean, nullable=False, default=False)
     data_realizacao = db.Column(db.String(10), nullable=True)
-    data_evento_original = db.Column(db.String(10), nullable=True)  # Nova coluna
-    
-    evento = db.relationship('Evento', backref=db.backref('contabilidade', uselist=False))
+    data_evento_original = db.Column(db.String(10), nullable=True)
 
 class Aluno(db.Model):
     id = db.Column(db.Integer, primary_key=True)

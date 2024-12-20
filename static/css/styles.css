@@ -3,13 +3,40 @@
 ==================================== */
 .card {
     border-radius: 16px; /* Bordas arredondadas */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombras suaves */
+    background-color: #ffffff; /* Fundo branco para contraste */
 }
 
 .card:hover {
     transform: scale(1.03); /* Ampliação sutil no hover */
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Destaque ao passar o mouse */
+}
+
+/* ====================================
+   Ajuste dinâmico dos cartões ao remover
+==================================== */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem; /* Espaçamento entre os cartões */
+    justify-content: flex-start;
+    transition: all 0.3s ease; /* Transição para o ajuste do layout */
+}
+
+.col-md-4 {
+    flex: 0 0 calc(33.333% - 1rem); /* Três colunas com espaçamento */
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px; /* Garantir espaçamento consistente */
+    transition: all 0.3s ease; /* Suave ao realocar os cartões */
+}
+
+/* Efeito de remoção suave */
+.card.removing {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* ====================================
@@ -54,240 +81,30 @@
 }
 
 /* ====================================
-   Cores para Diferentes Tipos de Eventos
-==================================== */
-.bg-show {
-    background-color: #b3d9ff; /* Azul pastel */
-    color: #004085; /* Azul escuro para contraste */
-}
-
-.bg-class {
-    background-color: #fff3cd; /* Amarelo pastel */
-    color: #856404; /* Amarelo escuro */
-}
-
-.bg-wedding {
-    background-color: #ffe5b4; /* Laranja pastel */
-    color: #b45f04; /* Laranja escuro */
-}
-
-/* ====================================
    Estilização por Proximidade de Datas
 ==================================== */
-/* Eventos com mais de 5 dias (amarelo claro) */
-.bg-warning {
-    background-color: #fff3cd !important; /* Amarelo muito claro */
-    border-color: #ffeeba !important;
-    color: #856404 !important;
-}
-
-/* Eventos com 5 dias ou menos (verde claro) */
+/* Eventos com 5 dias ou menos (verde claro suavizado) */
 .bg-success {
-    background-color: #e9f7ef !important; /* Verde muito claro */
-    border-color: #d4edda !important;
-    color: #155724 !important;
-}
-
-/* ====================================
-   Animações Suaves para os Cartões
-==================================== */
-.event-card {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s, transform 0.5s;
-}
-
-.event-card.visible {
-    opacity: 1; /* Tornar o cartão visível */
-    transform: translateY(0); /* Remover a translação vertical */
-}
-
-/* ====================================
-   Estilização Dinâmica do Título do Evento
-==================================== */
-.event-title {
-    background-color: #f1f1f1; /* Cor neutra */
-    color: #333;
-    padding: 8px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: bold;
+    background-color: #e8f5e9 !important; /* Verde claro mais suave */
+    border-color: #c8e6c9 !important; /* Verde de borda mais suave */
+    color: #2e7d32 !important; /* Verde escuro para contraste no texto */
 }
 
 /* ====================================
    Melhorias na Responsividade
 ==================================== */
 @media (max-width: 768px) {
+    .col-md-4 {
+        flex: 0 0 100%; /* Uma coluna por linha em telas menores */
+    }
+
     .card {
         margin-bottom: 20px; /* Espaçamento adicional entre cartões em telas menores */
     }
 
     .btn-realizado,
     .btn-excluir {
-        width: 100%;
+        width: 100%; /* Botões ocupam toda a largura em dispositivos menores */
         margin-bottom: 10px;
     }
-}
-
-/* ====================================
-   Estilização das tabelas
-==================================== */
-.table {
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.table th,
-.table td {
-    vertical-align: middle;
-}
-
-.table-success {
-    background-color: #e9f7ef !important;
-    font-weight: bold;
-}
-
-/* Animação para as linhas da tabela */
-tbody tr {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-/* ====================================
-   Tamanho do gráfico
-==================================== */
-.chart-container {
-    position: relative;
-    width: 100%; /* Ocupar toda a largura do contêiner */
-    max-width: 600px; /* Limite máximo de largura */
-    margin: 0 auto; /* Centraliza o gráfico */
-    height: 400px; /* Altura fixa ou ajustável */
-}
-
-/* ====================================
-   Estilização para a Rota de Contratos
-==================================== */
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-}
-
-h2 {
-    font-size: 1.8rem;
-    color: #444;
-    margin-bottom: 20px;
-}
-
-.card {
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
-    padding: 20px;
-    margin-top: 20px;
-}
-
-.card-header {
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    background-color: #f7f7f7;
-    border-bottom: 2px solid #ddd;
-    border-radius: 12px 12px 0 0;
-    padding: 15px;
-    margin-bottom: 15px;
-}
-
-label {
-    font-weight: bold;
-    color: #555;
-}
-
-input, select, textarea {
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 10px;
-    font-size: 1rem;
-    width: 100%;
-    margin-bottom: 15px;
-}
-
-input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-fieldset {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    background-color: #fefefe;
-}
-
-legend {
-    font-size: 1.2rem;
-    font-weight: bold;
-    padding: 0 10px;
-    color: #333;
-}
-
-.btn {
-    background-color: #007bff;
-    color: #fff;
-    font-size: 1.2rem;
-    padding: 10px 20px;
-    border-radius: 8px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.btn:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-}
-
-footer {
-    text-align: center;
-    padding: 10px 0;
-    background-color: #333;
-    color: #fff;
-    font-size: 0.9rem;
-    margin-top: 30px;
-}
-
-/* ====================================
-   Responsividade
-==================================== */
-@media (max-width: 768px) {
-    .card-header {
-        font-size: 1.2rem;
-    }
-
-    input, select, textarea {
-        font-size: 0.9rem;
-        padding: 8px;
-    }
-
-    .btn {
-        font-size: 1rem;
-        padding: 8px 15px;
-    }
-}
-
-/* ====================================
-   Estilização adicional para a Navbar e Dropdown
-==================================== */
-/* Aumentar a fonte da navbar */
-.navbar-nav .nav-link {
-    font-size: 1.1rem;
-}
-
-/* Dropdowns mais minimalistas */
-.dropdown-menu {
-    font-size: 1rem;
-    border-radius: 0;
-    border: 1px solid #ddd;
-    box-shadow: none;
 }
